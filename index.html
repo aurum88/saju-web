@@ -48,6 +48,29 @@ const {useState,useEffect,useRef,useCallback}=React;
 /* ── CONSTANTS ── */
 const MBTI=["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
 const HOURS=Array.from({length:25},(_,i)=>i===24?"모름":`${String(i).padStart(2,'0')}:00`);
+const CITIES=[
+  "선택 안 함",
+  "── 특별시·광역시 ──",
+  "서울특별시","부산광역시","대구광역시","인천광역시","광주광역시","대전광역시","울산광역시","세종특별자치시",
+  "── 경기·강원 ──",
+  "수원시","성남시","고양시","용인시","부천시","안산시","화성시","남양주시","안양시","평택시","의정부시","파주시","시흥시","김포시","광명시","광주시","군포시","이천시","양주시","오산시","하남시","구리시","의왕시","포천시","양평군","여주시","동두천시","가평군","연천군",
+  "춘천시","원주시","강릉시","동해시","태백시","속초시","삼척시","홍천군","횡성군","영월군","평창군","정선군","철원군","화천군","양구군","인제군","고성군","양양군",
+  "── 충청북도 ──",
+  "충청북도","청주시","충주시","제천시","보은군","옥천군","영동군","증평군","진천군","괴산군","음성군","단양군",
+  "── 충청남도 ──",
+  "충청남도","천안시","공주시","보령시","아산시","서산시","논산시","계룡시","당진시","금산군","부여군","서천군","청양군","홍성군","예산군","태안군",
+  "── 전북특별자치도 ──",
+  "전북특별자치도","전주시","군산시","익산시","정읍시","남원시","김제시","완주군","진안군","무주군","장수군","임실군","순창군","고창군","부안군",
+  "── 전라남도 ──",
+  "전라남도","목포시","여수시","순천시","나주시","광양시","담양군","곡성군","구례군","고흥군","보성군","화순군","장흥군","강진군","해남군","영암군","무안군","함평군","영광군","장성군","완도군","진도군","신안군",
+  "── 경상북도 ──",
+  "경상북도","포항시","경주시","김천시","안동시","구미시","영주시","영천시","상주시","문경시","경산시","군위군","의성군","청송군","영양군","영덕군","청도군","고령군","성주군","칠곡군","예천군","봉화군","울진군","울릉군",
+  "── 경상남도 ──",
+  "경상남도","창원시","진주시","통영시","사천시","김해시","밀양시","거제시","양산시","의령군","함안군","창녕군","고성군","남해군","하동군","산청군","함양군","거창군","합천군",
+  "── 제주 ──",
+  "제주특별자치도","제주시","서귀포시",
+];
+const CITY_DISABLED=["선택 안 함","── 특별시·광역시 ──","── 경기·강원 ──","── 충청북도 ──","── 충청남도 ──","── 전북특별자치도 ──","── 전라남도 ──","── 경상북도 ──","── 경상남도 ──","── 제주 ──"];
 const CONCERNS=[
   {id:"wealth",label:"재물·금전",icon:"💰",desc:"재정과 풍요로움"},
   {id:"love",label:"애정·관계",icon:"💕",desc:"사랑과 인연"},
@@ -112,7 +135,15 @@ function genReport(f){
 
   const habitTpl=`${dom.emoji}${dom.name}의 기운을 극대화하는 행운의 장소는 ${lucky.place}이며, 중요한 결정이나 미팅 전날 이곳을 방문하면 운세가 상승합니다. 아침 루틴으로는 기상 후 15분 이내에 미지근한 물 한 잔을 마시고 창을 열어 자연광을 받는 것이 하루의 기운을 열어주는 첫 번째 개운법입니다. 행운의 음식인 ${lucky.food}을 주 3회 이상 섭취하면 체내 기운의 균형이 맞춰져 전반적인 운세 흐름이 부드러워집니다. 취침 전 디지털 기기를 30분 이상 멀리하고 오늘 감사한 세 가지를 저널링하는 습관이 숙면과 다음 날 운세를 높이는 가장 간단하고 강력한 방법입니다. ${lucky.gem}을 몸에 지니거나 책상 위에 두면 ${dom.name}의 기운이 증폭되어 집중력과 판단력이 향상됩니다.`;
 
-  return{oheng,wealth,love,career,health,mentor,study,week,lotto,dom,lucky,trait:traits[f.mbti]||"독특한 개성",overall:overallTpl,wealthDeep:wealthTpl,loveDeep:loveTpl,habitDeep:habitTpl};
+  const careerTpl=`올해 커리어 운세는 ${dom.emoji}${dom.name}의 강력한 기운 아래 상승 궤도에 진입합니다. ${traits[f.mbti]||'당신의 강점'}을 가진 당신은 이 해에 특히 리더십과 전문성이 주목받는 프로젝트에서 두각을 나타낼 가능성이 높습니다. 상반기에는 기존 역량을 갈고닦는 준비 시기이며, 하반기에는 그 결과물이 외부로 인정받는 상승기가 찾아옵니다. 이직·창업·승진 등 중요한 커리어 결정은 7~9월 사이의 기운이 가장 강하므로 이 시기를 적극 활용하세요. 주변의 귀인 중 당신보다 한 단계 위의 멘토 타입을 가까이 두면 커리어 가속도가 붙습니다. 지금 준비하는 일이 결실을 맺는 해이니 포기하지 말고 꾸준히 나아가세요.`;
+
+  const healthTpl=`올해 건강운은 ${dom.emoji}${dom.name}의 기운과 함께 체력 재충전의 사이클에 진입합니다. 이른 아침 루틴을 강화하고 행운의 음식인 ${lucky.food}을 꾸준히 섭취하면 체내 기운의 균형이 맞춰집니다. 상반기에는 피로 관리와 소화기 건강에 특별히 주의를 기울이고, 하반기에는 체력이 상승하는 에너지 전환점이 찾아옵니다. 정기 건강검진과 충분한 수면(7~8시간)이 올해 건강운을 유지하는 핵심 습관입니다. ${lucky.gem}을 몸에 지니면 ${dom.name}의 치유 기운이 활성화되어 면역력 강화에 도움이 됩니다. 마음의 건강을 위해 감사 일기와 명상 루틴을 추가하면 2026년 내내 활력이 넘칩니다.`;
+
+  const mentorTpl=`올해 귀인·인복은 특별히 강한 흐름을 보입니다. ${dom.emoji}${dom.name}의 기운은 좋은 사람들을 끌어당기는 자력이 있으며, 예상치 못한 조력자가 인생의 결정적 순간에 나타날 것입니다. 귀인의 타입은 조용하지만 영향력 있는 인물로, 직접적인 도움보다 핵심 정보와 연결을 제공하는 방식으로 기여합니다. 새로운 모임이나 커뮤니티에 적극 참여하되, 표면적인 네트워킹보다 깊은 관심사를 공유하는 소수와의 연결에 집중하세요. 기존 관계에서도 오랫동안 소홀히 했던 분들께 먼저 연락하면 예상치 못한 귀인 효과가 발동합니다. 인복을 키우는 핵심은 자신이 먼저 누군가의 귀인이 되어주는 것임을 기억하세요.`;
+
+  const studyTpl=`올해 학업·시험운은 ${dom.emoji}${dom.name}의 집중력 기운이 강하게 뒷받침합니다. ${traits[f.mbti]||'당신의 강점'}의 특성상 깊이 있는 집중력이 발휘되는 시기이며, 특히 전문 자격증이나 고급 학위 과정에서 탁월한 성과를 낼 수 있습니다. 시험 준비는 오전 6~9시와 오후 9~11시의 집중력 골든타임을 적극 활용하세요. 행운의 공부 장소인 ${lucky.place}를 학습 공간으로 활용하면 집중력과 기억력이 배가됩니다. 합격 기운의 피크는 3월과 9월이므로 이 시기에 맞춰 중요한 시험을 준비하는 것을 권장합니다. 행운 숫자 ${lucky.number}을 시험 당일 활용하면 긍정적인 에너지를 끌어올릴 수 있습니다.`;
+
+  return{oheng,wealth,love,career,health,mentor,study,week,lotto,dom,lucky,trait:traits[f.mbti]||"독특한 개성",overall:overallTpl,wealthDeep:wealthTpl,loveDeep:loveTpl,habitDeep:habitTpl,careerDeep:careerTpl,healthDeep:healthTpl,mentorDeep:mentorTpl,studyDeep:studyTpl};
 }
 
 /* ── STAR FIELD (별똥별 없음 — 초창기 스타일 그대로) ── */
@@ -477,7 +508,7 @@ function ReportSection({data,form,onShare,onLotto,reportRef}){
         </div>
       </>,0.4)}
 
-      {/* 심층 리포트 아코디언 */}
+      {/* 심층 리포트 아코디언 — 6개 항목, 선택한 고민만 기본 열림 */}
       <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(167,139,250,0.1)',borderRadius:'18px',padding:'20px',marginBottom:'12px',animation:'riseR .7s ease .48s both'}}>
         <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'14px'}}>
           <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
@@ -486,13 +517,15 @@ function ReportSection({data,form,onShare,onLotto,reportRef}){
           </div>
           <span style={{padding:'3px 10px',borderRadius:'99px',background:'rgba(74,222,128,0.12)',border:'1px solid rgba(74,222,128,0.25)',color:'#4ade80',fontSize:'0.6rem',fontWeight:700,letterSpacing:'0.06em'}}>PRO</span>
         </div>
+        {/* 종합 사주 총평 — 항상 열림 */}
         <Accordion icon="🌌" title="종합 사주 총평 — 올해의 전체 기운" open={true} accent="#a78bfa">
           <p style={{marginBottom:'10px'}}>{data.overall}</p>
           <div style={{padding:'10px',borderRadius:'10px',background:'rgba(167,139,250,0.07)',border:'1px solid rgba(167,139,250,0.15)'}}>
             <p style={{color:'rgba(167,139,250,0.8)',fontSize:'0.7rem'}}>✦ 핵심 키워드: <NH c="#a78bfa">집중</NH> · <NH c="#60a5fa">확장</NH> · <NH c="#f472b6">연결</NH></p>
           </div>
         </Accordion>
-        <Accordion icon="💰" title="재물운 집중 분석 — 귀인과 재테크 전략" accent="#fbbf24">
+        {/* 재물운 */}
+        <Accordion icon="💰" title="재물운 집중 분석 — 귀인과 재테크 전략" open={form.concern==='wealth'} accent="#fbbf24">
           <p style={{marginBottom:'10px'}}>{data.wealthDeep}</p>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6px'}}>
             {[{l:'행운 방위',v:'동남쪽',icon:'🧭'},{l:'재물 피크',v:'3~5월',icon:'📅'},{l:'행운 숫자',v:data.lucky.number,icon:'🔢'},{l:'피할 것',v:'충동 지출',icon:'⚠️'}].map(x=>(
@@ -504,12 +537,42 @@ function ReportSection({data,form,onShare,onLotto,reportRef}){
             ))}
           </div>
         </Accordion>
-        <Accordion icon="💕" title="애정 및 대인관계 — 연애·파트너십 전략" accent="#f472b6">
+        {/* 애정운 */}
+        <Accordion icon="💕" title="애정 및 대인관계 — 연애·파트너십 전략" open={form.concern==='love'} accent="#f472b6">
           <p>{data.loveDeep}</p>
           <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(244,114,182,0.06)',border:'1px solid rgba(244,114,182,0.15)'}}>
             <p style={{color:'rgba(244,114,182,0.8)',fontSize:'0.7rem'}}>✦ 인연 피크: <NH c="#f472b6">5월·9월</NH> · 인연 장소: <NH c="#f472b6">지적 모임·온라인 커뮤니티</NH></p>
           </div>
         </Accordion>
+        {/* 커리어운 */}
+        <Accordion icon="🚀" title="커리어운 분석 — 성장과 성취 전략" open={form.concern==='career'} accent="#60a5fa">
+          <p>{data.careerDeep}</p>
+          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(96,165,250,0.06)',border:'1px solid rgba(96,165,250,0.15)'}}>
+            <p style={{color:'rgba(96,165,250,0.8)',fontSize:'0.7rem'}}>✦ 커리어 피크: <NH c="#60a5fa">7~9월</NH> · 귀인 타입: <NH c="#60a5fa">멘토·선배·업계 인플루언서</NH></p>
+          </div>
+        </Accordion>
+        {/* 건강운 */}
+        <Accordion icon="🌿" title="건강운 분석 — 체력과 활력 관리" open={form.concern==='health'} accent="#4ade80">
+          <p>{data.healthDeep}</p>
+          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(74,222,128,0.06)',border:'1px solid rgba(74,222,128,0.15)'}}>
+            <p style={{color:'rgba(74,222,128,0.8)',fontSize:'0.7rem'}}>✦ 행운 음식: <NH c="#4ade80">{data.lucky.food}</NH> · 건강 보석: <NH c="#4ade80">{data.lucky.gem}</NH></p>
+          </div>
+        </Accordion>
+        {/* 귀인·인복 */}
+        <Accordion icon="🤝" title="귀인·인복 — 좋은 사람과의 인연" open={form.concern==='mentor'} accent="#c084fc">
+          <p>{data.mentorDeep}</p>
+          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(192,132,252,0.06)',border:'1px solid rgba(192,132,252,0.15)'}}>
+            <p style={{color:'rgba(192,132,252,0.8)',fontSize:'0.7rem'}}>✦ 귀인 피크: <NH c="#c084fc">봄·가을 모임</NH> · 귀인 장소: <NH c="#c084fc">{data.lucky.place}</NH></p>
+          </div>
+        </Accordion>
+        {/* 학업·시험운 */}
+        <Accordion icon="📚" title="학업·시험운 — 합격의 기운" open={form.concern==='study'} accent="#f97316">
+          <p>{data.studyDeep}</p>
+          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(249,115,22,0.06)',border:'1px solid rgba(249,115,22,0.15)'}}>
+            <p style={{color:'rgba(249,115,22,0.8)',fontSize:'0.7rem'}}>✦ 합격 피크: <NH c="#f97316">3월·9월</NH> · 행운 장소: <NH c="#f97316">{data.lucky.place}</NH></p>
+          </div>
+        </Accordion>
+        {/* 풍수 개운법 */}
         <Accordion icon="🌅" title="생활 습관 개운법 — 풍수 & 아침 루틴" accent="#4ade80">
           <p style={{marginBottom:'10px'}}>{data.habitDeep}</p>
           <div style={{display:'flex',flexDirection:'column',gap:'6px'}}>
@@ -541,7 +604,7 @@ function ReportSection({data,form,onShare,onLotto,reportRef}){
 
 /* ── MAIN APP ── */
 function App(){
-  const [form,setForm]=useState({name:'',chineseName:'',gender:'',birthdate:'',birthHour:'',mbti:'',concern:'',phone:'',email:'',agree:false});
+  const [form,setForm]=useState({name:'',chineseName:'',gender:'',birthdate:'',birthHour:'',city:'',mbti:'',concern:'',phone:'',email:'',agree:false});
   const [analyzing,setAnalyzing]=useState(false);
   const [report,setReport]=useState(null);
   const [errors,setErrors]=useState({});
@@ -580,6 +643,7 @@ function App(){
       "생년월일":    data.birthdate,
       "태어난시간":  data.birthHour,
       "성별":        data.gender==='male'?'남성':data.gender==='female'?'여성':'',
+      "태어난도시":  data.city||'',
       "MBTI":        data.mbti,
       "고민내용":    CONCERN_KR[data.concern]||data.concern,
       "추천로또번호":lottoStr,
@@ -610,7 +674,7 @@ function App(){
     setTimeout(()=>resultAnchor.current?.scrollIntoView({behavior:'smooth',block:'start'}),200);
   },[form]);
 
-  const handleReset=()=>{setReport(null);setForm({name:'',chineseName:'',gender:'',birthdate:'',birthHour:'',mbti:'',concern:'',phone:'',email:'',agree:false});window.scrollTo({top:0,behavior:'smooth'});};
+  const handleReset=()=>{setReport(null);setForm({name:'',chineseName:'',gender:'',birthdate:'',birthHour:'',city:'',mbti:'',concern:'',phone:'',email:'',agree:false});window.scrollTo({top:0,behavior:'smooth'});};
 
   const inp=(k)=>({
     width:'100%',padding:'12px 14px',borderRadius:'12px',fontSize:'0.86rem',
@@ -702,7 +766,7 @@ function App(){
                 <input type="date" value={form.birthdate} onChange={e=>set('birthdate',e.target.value)} onFocus={()=>setFocused('bd')} onBlur={()=>setFocused(null)} style={{...inp('bd'),colorScheme:'dark'}}/>
                 {errors.birthdate&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'4px'}}>생년월일을 입력해 주세요</p>}
               </div>
-              <div>
+              <div style={{marginBottom:'16px'}}>
                 <label style={lbl}>태어난 시간 *</label>
                 <div style={{position:'relative'}}>
                   <select value={form.birthHour} onChange={e=>set('birthHour',e.target.value)} onFocus={()=>setFocused('bh')} onBlur={()=>setFocused(null)} style={{...inp('bh'),paddingRight:'36px',cursor:'pointer'}}>
@@ -712,6 +776,20 @@ function App(){
                   <svg style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(167,139,250,0.45)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
                 {errors.birthHour&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'4px'}}>태어난 시간을 선택해 주세요</p>}
+              </div>
+              <div>
+                <label style={lbl}>태어난 도시 <span style={{color:'rgba(167,139,250,0.4)',fontSize:'0.6rem',letterSpacing:'0.04em',textTransform:'none'}}>(선택)</span></label>
+                <div style={{position:'relative'}}>
+                  <select value={form.city} onChange={e=>set('city',e.target.value)} onFocus={()=>setFocused('ct')} onBlur={()=>setFocused(null)} style={{...inp('ct'),paddingRight:'36px',cursor:'pointer'}}>
+                    {CITIES.map(c=>(
+                      <option key={c} value={CITY_DISABLED.includes(c)?'':c} disabled={CITY_DISABLED.includes(c)} style={{color:CITY_DISABLED.includes(c)?'rgba(167,139,250,0.4)':'#e2d9f3',fontWeight:CITY_DISABLED.includes(c)?600:'normal'}}>
+                        {c}
+                      </option>
+                    ))}
+                  </select>
+                  <svg style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(167,139,250,0.45)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                </div>
+                <p style={{color:'rgba(167,139,250,0.3)',fontSize:'0.62rem',marginTop:'4px'}}>✦ 출생 도시 정보는 더 정밀한 사주 분석에 활용됩니다.</p>
               </div>
             </div>
 
