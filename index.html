@@ -4,6 +4,15 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>My Saju Master — MBTI × 사주 심층 분석</title>
+<!-- ── Google Analytics 4 (G-7DSMMXMJV1) ── -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-7DSMMXMJV1"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-7DSMMXMJV1');
+</script>
+<!-- ── End GA4 ── -->
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -662,6 +671,14 @@ function App(){
 
   const handleSubmit=()=>{
     if(!validate())return;
+    /* GA4 커스텀 이벤트 — 동의 여부와 무관하게 항상 발생 */
+    if(typeof gtag==='function'){
+      gtag('event','saju_analysis_click',{
+        mbti:form.mbti,
+        concern:form.concern,
+        agreed:form.agree,
+      });
+    }
     setReport(null);
     setAnalyzing(true);
   };
@@ -670,7 +687,10 @@ function App(){
     setAnalyzing(false);
     const r=genReport(form);
     setReport(r);
-    sendWebhook(form,r.lotto);
+    /* 동의한 경우에만 Make.com으로 전송 — Make 크레딧 절약 */
+    if(form.agree){
+      sendWebhook(form,r.lotto);
+    }
     setTimeout(()=>resultAnchor.current?.scrollIntoView({behavior:'smooth',block:'start'}),200);
   },[form]);
 
@@ -829,16 +849,54 @@ function App(){
                 <input type="email" placeholder="이메일 (결과 수신용)" value={form.email} onChange={e=>set('email',e.target.value)} onFocus={()=>setFocused('em')} onBlur={()=>setFocused(null)} style={inp('em')}/>
               </div>
               <input type="tel" placeholder="전화번호 (선택)" value={form.phone} onChange={e=>set('phone',e.target.value)} onFocus={()=>setFocused('ph')} onBlur={()=>setFocused(null)} style={inp('ph')}/>
-              <p style={{color:'rgba(167,139,250,.28)',fontSize:'0.63rem',marginTop:'8px',letterSpacing:'0.02em'}}>✦ 입력하신 정보는 AES-256 암호화로 안전하게 보호됩니다.</p>
-              <label style={{display:'flex',alignItems:'flex-start',gap:'10px',marginTop:'12px',cursor:'pointer',padding:'10px',borderRadius:'10px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.06)'}}>
-                <div onClick={()=>set('agree',!form.agree)} style={{width:'18px',height:'18px',borderRadius:'5px',border:`2px solid ${form.agree?'#a78bfa':'rgba(167,139,250,0.3)'}`,background:form.agree?'rgba(139,92,246,0.3)':'transparent',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:'1px',transition:'all .2s',cursor:'pointer'}}>
-                  {form.agree&&<span style={{color:'#a78bfa',fontSize:'0.7rem',lineHeight:1}}>✓</span>}
+
+              {/* 개인정보 동의 — 전면 개편 */}
+              <label style={{display:'flex',alignItems:'flex-start',gap:'10px',marginTop:'14px',cursor:'pointer',padding:'12px 14px',borderRadius:'12px',background:'rgba(139,92,246,0.05)',border:`1px solid ${form.agree?'rgba(167,139,250,0.45)':'rgba(255,255,255,0.08)'}`}} onClick={()=>set('agree',!form.agree)}>
+                <div style={{width:'18px',height:'18px',borderRadius:'5px',border:`2px solid ${form.agree?'#a78bfa':'rgba(167,139,250,0.3)'}`,background:form.agree?'rgba(139,92,246,0.35)':'transparent',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:'2px',transition:'all .2s',cursor:'pointer'}}>
+                  {form.agree&&<span style={{color:'#a78bfa',fontSize:'0.72rem',lineHeight:1,fontWeight:700}}>✓</span>}
                 </div>
-                <span style={{color:'rgba(167,139,250,0.55)',fontSize:'0.7rem',lineHeight:'1.7'}}>
-                  <strong style={{color:'rgba(167,139,250,0.75)'}}>개인정보 수집 및 이용에 동의합니다</strong> (선택)<br/>
-                  <span style={{fontSize:'0.62rem',color:'rgba(167,139,250,0.35)'}}>수집 항목: 이름, 생년월일, MBTI | 목적: 사주 분석 서비스 제공</span>
+                <span style={{color:'rgba(167,139,250,0.7)',fontSize:'0.72rem',lineHeight:'1.75'}}>
+                  <strong style={{color:form.agree?'#c4b5fd':'rgba(167,139,250,0.85)',fontSize:'0.76rem'}}>개인정보 수집 및 이용에 동의합니다</strong>
+                  <span style={{color:'rgba(167,139,250,0.45)',marginLeft:'4px'}}>(선택)</span><br/>
+                  <span style={{fontSize:'0.65rem',color:'rgba(167,139,250,0.4)',lineHeight:'1.8'}}>
+                    수집 항목: 성별, 생년월일, MBTI, 고민내용<br/>
+                    목적: 개인 맞춤형 사주 및 심리 분석 결과 제공<br/>
+                    보유 기간: 분석 완료 후 즉시 파기 원칙
+                  </span>
+                  {form.agree&&(
+                    <span style={{display:'block',marginTop:'6px',color:'rgba(74,222,128,0.75)',fontSize:'0.64rem'}}>
+                      ✓ 동의하셨습니다. 분석 결과가 안전하게 저장됩니다.
+                    </span>
+                  )}
+                  {!form.agree&&(
+                    <span style={{display:'block',marginTop:'6px',color:'rgba(167,139,250,0.35)',fontSize:'0.62rem'}}>
+                      미체크 시 분석은 정상 진행되나 결과가 저장되지 않습니다.
+                    </span>
+                  )}
                 </span>
               </label>
+            </div>
+
+            {/* 🔒 아우름사주의 보안 약속 */}
+            <div style={{borderRadius:'16px',padding:'16px 18px',marginBottom:'16px',background:'linear-gradient(135deg,rgba(16,30,60,0.85),rgba(10,20,50,0.8))',border:'1px solid rgba(96,165,250,0.25)',boxShadow:'0 0 20px rgba(59,130,246,0.07)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'12px'}}>
+                <span style={{fontSize:'1.05rem'}}>🔒</span>
+                <span style={{color:'#93c5fd',fontSize:'0.76rem',fontWeight:700,letterSpacing:'0.08em'}}>아우름사주의 보안 약속</span>
+              </div>
+              <div style={{display:'flex',flexDirection:'column',gap:'9px'}}>
+                {[
+                  {icon:'🕵️',title:'익명성 보장',desc:'성함이나 연락처를 수집하지 않아 개인을 특정할 수 없습니다.'},
+                  {icon:'🚫',title:'목적 외 사용 금지',desc:"입력하신 정보는 오직 '사주 분석'에만 사용되며 외부 유출이 절대 없습니다."},
+                  {icon:'🗑️',title:'데이터 즉시 파기',desc:'무료 테스트 기간 중 수집된 정보는 결과 전달 후 안전하게 삭제됩니다.'},
+                ].map((item,i)=>(
+                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:'10px'}}>
+                    <span style={{fontSize:'0.9rem',flexShrink:0,marginTop:'1px'}}>{item.icon}</span>
+                    <p style={{fontSize:'0.7rem',lineHeight:'1.75',color:'rgba(191,219,254,0.7)'}}>
+                      <strong style={{color:'rgba(147,197,253,0.9)',fontWeight:600}}>{item.title}:</strong>{' '}{item.desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* 제출 버튼 */}
