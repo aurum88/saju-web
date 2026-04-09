@@ -545,7 +545,10 @@ function ReportSection({data,form,onShare,onLotto,reportRef}){
         {/* API 에러 알림 */}
         {data.apiError&&(
           <div style={{padding:'10px 14px',borderRadius:'12px',background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.25)',marginBottom:'10px',textAlign:'center'}}>
-            <p style={{color:'rgba(252,165,165,0.9)',fontSize:'0.72rem'}}>⚠️ 별들의 신호가 잠시 끊겼습니다. 로컬 분석 결과로 대체되었습니다.</p>
+            <p style={{color:'rgba(252,165,165,0.9)',fontSize:'0.72rem'}}>
+              ⚠️ 천문의 기운이 잠시 불안정합니다 ({data.errCode||'ERROR'}). 다시 시도해주세요.
+            </p>
+            <p style={{color:'rgba(252,165,165,0.6)',fontSize:'0.65rem',marginTop:'4px'}}>로컬 사주 분석으로 대체 표시됩니다.</p>
           </div>
         )}
         <h2 style={{fontFamily:"'Noto Serif KR',serif",color:'#f0e6ff',fontSize:'1.6rem',fontWeight:300,lineHeight:1.4,marginBottom:'6px'}}>
@@ -815,95 +818,172 @@ function App(){
     handleDone();
   };
 
-  /* ── Gemini API 호출 ── */
-  const GEMINI_KEY='AIzaSyBYCTs1IP4zQadfscOeC8OvQehajb5vs_w';
-  const GEMINI_URL=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`;
+  /* ── Gemini API 설정 ── */
+  const GEMINI_KEY='AIzaSyCkwa5p7PbAbZ62iYxvORlum4T9q1JDmoM';
+  /* gemini-2.0-flash : 2025년 기준 최신 안정 모델 */
+  const GEMINI_URL=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
 
   const callGemini=async(f,localRep)=>{
     const concernKRMap={wealth:"재물·금전",love:"애정·관계",career:"커리어·직업",health:"건강·활력",mentor:"귀인·인복",study:"학업·시험운"};
     const sj=localRep.sj||{};
-    const prompt=`너는 20년 경력의 명리학 대가이자 심리상담 전문가야.
-아래 사용자 정보를 바탕으로 JSON 형식으로만 응답해. JSON 외 다른 텍스트는 절대 포함하지 마.
+
+    /* ── 프롬프트: JSON 예시에 실제 숫자 대신 설명 표기 (Gemini 혼란 방지) ── */
+    const prompt=
+`너는 20년 경력의 명리학 대가이자 심리상담사야.
+아래 [사용자 정보]를 바탕으로 일주(日柱)를 정확히 도출하고, 그 사람만을 위한 독보적인 사주 풀이를 해줘.
 
 [사용자 정보]
-- 이름: ${f.name||'익명'}${f.chineseName?' ('+f.chineseName+')':''}
-- 성별: ${f.gender==='male'?'남성':'여성'}
-- 생년월일: ${f.birthdate||''}
-- 출생시간: ${f.birthHour||'모름'}
-- 출생도시: ${f.city||'미입력'}
-- MBTI: ${f.mbti||''}
-- 가장 큰 고민: ${concernKRMap[f.concern]||f.concern||''}
-- 일주(日柱): ${sj.dGan||''}${sj.dJi||''}일주
-- 월지(月支): ${sj.mJi||''}
-- 연주(年柱): ${sj.ySaju||''}
-- 주도 오행: ${localRep.dom?.name||''}
-- 약한 오행: ${localRep.weakName||''}
+이름: ${f.name||'익명'}${f.chineseName?' ('+f.chineseName+')':''}
+성별: ${f.gender==='male'?'남성':'여성'}
+생년월일: ${f.birthdate||''} (${sj.tiTxt||''})
+출생시간: ${f.birthHour||'모름'}
+출생도시: ${f.city||'미입력'}
+MBTI: ${f.mbti||''}
+가장 큰 고민: ${concernKRMap[f.concern]||f.concern||''}
+일주(日柱): ${sj.dGan||''}${sj.dJi||''}일주
+월지(月支): ${sj.mJi||''}
+연주(年柱): ${sj.ySaju||''}
+주도 오행: ${localRep.dom&&localRep.dom.name?localRep.dom.name:''}
+용신(부족한 오행): ${localRep.weakName||''}
 
-[출력 형식 - 반드시 아래 JSON 구조만 반환]
-{
-  "overall": "전체 사주 총평. 일주와 월지의 관계, MBTI와의 시너지를 포함한 소름 돋는 구체적 분석. 300자 이상.",
-  "wealthDeep": "재물운과 구체적인 시기별 조언. 재성 분석, 재물 귀인 유형, 적합한 재테크 방향 포함. 250자 이상.",
-  "loveDeep": "애정운과 귀인 분석. 이상적 파트너 기운, 인연의 피크 시기, 관계 개선 조언 포함. 250자 이상.",
-  "careerDeep": "커리어 성공 전략. 관성·식상 분석, 적합한 직종, 커리어 전환 적기 포함. 250자 이상.",
-  "healthDeep": "건강 및 개운법. 주도 오행에 따른 취약 장기, 식이요법, 생활 습관 조언 포함. 250자 이상.",
-  "mentorDeep": "귀인·인복 분석. 귀인의 유형, 등장 시기, 인연을 끌어당기는 방법 포함. 200자 이상.",
-  "studyDeep": "학업·시험운. 집중력 기반 분석, 유리한 시험 유형, 합격 기운 시기 포함. 200자 이상.",
-  "habitDeep": "생활 습관 개운법. 행운 아이템·컬러·장소·음식·보석 포함. 200자 이상."
-}
+[출력 규칙 — 반드시 준수]
+1. 응답 전체가 반드시 올바른 JSON 객체여야 한다. 마크다운, 코드블록, 추가 설명 절대 금지.
+2. 아래 키를 모두 포함할 것:
+   overall / wealthDeep / loveDeep / careerDeep / healthDeep / habitDeep / mentorDeep / studyDeep / lotto
+3. overall은 300자 이상, 나머지 텍스트 필드는 200자 이상으로 작성.
+4. 뻔한 표현("올해는 좋은 해입니다" 등) 절대 금지. 일주·월지 상호작용을 반드시 언급.
+5. 고민 항목 "${concernKRMap[f.concern]||''}"을 특히 깊이 분석할 것.
+6. 시기 표현은 반드시 "X월~Y월" 형식으로 구체적으로 명시.
+7. lotto는 1~45 사이 정수, 중복 없이, 5개 세트 × 6개 숫자 배열. 사주 오행에 맞게 생성.
+8. 모든 내용은 한국어로 작성.
 
-[주의사항]
-- 뻔한 표현 절대 금지 (예: "올해는 좋은 해입니다" 식의 일반론 불가)
-- 일주(${sj.dGan||''}${sj.dJi||''})와 월지(${sj.mJi||''})의 상호작용을 반드시 언급
-- 고민 항목(${concernKRMap[f.concern]||''})에 해당하는 항목을 특히 더 자세하게 작성
-- 모든 시기는 구체적인 월(예: 3~5월)로 명시
-- 한국어로 작성`;
+응답 형식 (이 형식 그대로, 값만 채워서 출력):
+{"overall":"...","wealthDeep":"...","loveDeep":"...","careerDeep":"...","healthDeep":"...","habitDeep":"...","mentorDeep":"...","studyDeep":"...","lotto":[[숫자6개],[숫자6개],[숫자6개],[숫자6개],[숫자6개]]}`;
 
-    const res=await fetch(GEMINI_URL,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        contents:[{parts:[{text:prompt}]}],
-        generationConfig:{temperature:0.85,topP:0.95,maxOutputTokens:4096},
-      }),
-    });
-    if(!res.ok)throw new Error(`Gemini HTTP ${res.status}`);
+    /* ── API 호출 ── */
+    let res;
+    try{
+      res=await fetch(GEMINI_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          contents:[{parts:[{text:prompt}]}],
+          generationConfig:{
+            temperature:0.85,
+            topP:0.95,
+            maxOutputTokens:4096,
+          },
+        }),
+      });
+    }catch(netErr){
+      console.error('[Gemini 네트워크 오류]',netErr);
+      throw new Error('NETWORK_ERROR');
+    }
+
+    if(!res.ok){
+      const errStatus=res.status;
+      const errBody=await res.text().catch(()=>'');
+      console.error(`[Gemini HTTP ${errStatus}]`,errBody.slice(0,200));
+      throw new Error('HTTP_'+errStatus);
+    }
+
     const data=await res.json();
-    const raw=data?.candidates?.[0]?.content?.parts?.[0]?.text||'';
-    /* JSON 파싱 — 마크다운 코드블록 제거 */
-    const cleaned=raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-    const parsed=JSON.parse(cleaned);
+    console.log('[Gemini 응답 수신]',JSON.stringify(data).slice(0,300));
+
+    const raw=(data?.candidates?.[0]?.content?.parts?.[0]?.text)||'';
+    if(!raw){
+      console.error('[Gemini 빈 응답] 전체 응답:',JSON.stringify(data).slice(0,500));
+      throw new Error('EMPTY_RESPONSE');
+    }
+    console.log('[Gemini 원본 텍스트]',raw.slice(0,400));
+
+    /* ── 철저한 JSON 추출 ── */
+    /* 1) 마크다운 코드블록 제거 (멀티라인 플래그 필요 없이 전역 치환) */
+    let cleaned=raw
+      .replace(/```json/gi,'')
+      .replace(/```/g,'')
+      .trim();
+
+    /* 2) 첫 { 부터 마지막 } 까지만 추출 */
+    const jStart=cleaned.indexOf('{');
+    const jEnd  =cleaned.lastIndexOf('}');
+    if(jStart<0||jEnd<=jStart){
+      console.error('[JSON 추출 실패] cleaned:',cleaned.slice(0,300));
+      throw new Error('JSON_NOT_FOUND');
+    }
+    cleaned=cleaned.slice(jStart,jEnd+1);
+
+    /* 3) JSON 문자열 내부의 줄바꿈 이스케이프 처리 (파싱 실패 방지) */
+    /* 문자열 값 안의 실제 개행문자를 \\n으로 치환 */
+    cleaned=cleaned.replace(/:\s*"([\s\S]*?)"/g,(match,val)=>{
+      const escaped=val.replace(/\n/g,'\\n').replace(/\r/g,'');
+      return ': "'+escaped+'"';
+    });
+
+    let parsed;
+    try{
+      parsed=JSON.parse(cleaned);
+    }catch(parseErr){
+      console.error('[JSON 파싱 실패]',parseErr.message,'cleaned:',cleaned.slice(0,500));
+      throw new Error('PARSE_ERROR');
+    }
+
+    console.log('[Gemini 파싱 성공] keys:',Object.keys(parsed));
     return parsed;
   };
 
-  const handleDone=useCallback(async()=>{
-    /* 1) 로컬 사주 엔진으로 오행·점수·로또 계산 (빠름) */
+
+    const handleDone=useCallback(async()=>{
+    /* 1) 로컬 사주 엔진 — 오행·점수 즉시 계산 (Gemini 대기 동안 UI 준비) */
     const localRep=genReport(form);
 
     try{
-      /* 2) Gemini API로 텍스트 분석 요청 */
-      const aiTexts=await callGemini(form,localRep);
-      /* 3) 로컬 계산 결과 + AI 텍스트 합성 */
+      /* 2) Gemini API 호출 — 텍스트 + 로또 번호 실시간 생성 */
+      const aiData=await callGemini(form,localRep);
+
+      /* 3) AI 로또 번호 검증 및 적용 */
+      let finalLotto=localRep.lotto; /* 기본값: 로컬 생성 */
+      if(Array.isArray(aiData.lotto)&&aiData.lotto.length>=5){
+        /* 각 세트가 유효한 배열인지 검증 */
+        const validLotto=aiData.lotto
+          .slice(0,5)
+          .map(set=>{
+            if(!Array.isArray(set))return null;
+            const nums=set.map(Number).filter(n=>n>=1&&n<=45);
+            const unique=[...new Set(nums)];
+            return unique.length>=6?unique.slice(0,6).sort((a,b)=>a-b):null;
+          })
+          .filter(Boolean);
+        if(validLotto.length>=5) finalLotto=validLotto;
+      }
+
+      /* 4) 로컬 결과 + AI 텍스트 + AI 로또 합성 */
       const merged={
         ...localRep,
-        overall:   aiTexts.overall    ||localRep.overall,
-        wealthDeep:aiTexts.wealthDeep ||localRep.wealthDeep,
-        loveDeep:  aiTexts.loveDeep   ||localRep.loveDeep,
-        careerDeep:aiTexts.careerDeep ||localRep.careerDeep,
-        healthDeep:aiTexts.healthDeep ||localRep.healthDeep,
-        mentorDeep:aiTexts.mentorDeep ||localRep.mentorDeep,
-        studyDeep: aiTexts.studyDeep  ||localRep.studyDeep,
-        habitDeep: aiTexts.habitDeep  ||localRep.habitDeep,
-        aiPowered:true,
+        lotto:      finalLotto,
+        overall:    aiData.overall    ||localRep.overall,
+        wealthDeep: aiData.wealthDeep ||localRep.wealthDeep,
+        loveDeep:   aiData.loveDeep   ||localRep.loveDeep,
+        careerDeep: aiData.careerDeep ||localRep.careerDeep,
+        healthDeep: aiData.healthDeep ||localRep.healthDeep,
+        habitDeep:  aiData.habitDeep  ||localRep.habitDeep,
+        mentorDeep: aiData.mentorDeep ||localRep.mentorDeep,
+        studyDeep:  aiData.studyDeep  ||localRep.studyDeep,
+        aiPowered:  true,
+        apiError:   false,
       };
       setAnalyzing(false);
       setReport(merged);
       if(form.agree) sendWebhook(form,merged.lotto);
       setTimeout(()=>resultAnchor.current?.scrollIntoView({behavior:'smooth',block:'start'}),200);
+
     }catch(err){
-      console.warn('Gemini 오류, 로컬 분석으로 대체:',err);
-      /* 4) API 실패 시 → 로컬 결과 표시 + 에러 토스트 */
+      /* 5) API 오류 — 콘솔에 상세 출력, 사용자에게 에러 코드 포함 안내 */
+      const errCode=err.message||'UNKNOWN';
+      console.error('[Gemini 최종 오류]',errCode,err);
       setAnalyzing(false);
-      setReport({...localRep,aiPowered:false,apiError:true});
+      /* 로컬 분석 결과는 항상 표시 */
+      setReport({...localRep,aiPowered:false,apiError:true,errCode});
       if(form.agree) sendWebhook(form,localRep.lotto);
       setTimeout(()=>resultAnchor.current?.scrollIntoView({behavior:'smooth',block:'start'}),200);
     }
