@@ -2,62 +2,111 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>대전 사주 명리관 - Gemini AI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>대전 사주 명리관 - AI 실시간 분석</title>
     <style>
-        /* 대표님의 깔끔한 디자인 유지 */
-        body { font-family: 'Noto Sans KR', sans-serif; background: #f4f7f6; display: flex; justify-content: center; padding: 20px; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        input, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; box-sizing: border-box; }
-        button { background: #e74c3c; color: white; border: none; font-weight: bold; cursor: pointer; }
-        #result { margin-top: 20px; white-space: pre-wrap; line-height: 1.6; background: #fff8f8; padding: 15px; border-radius: 8px; display: none; }
+        :root {
+            --primary: #2c3e50;
+            --accent: #e74c3c;
+            --bg: #f8f9fa;
+        }
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: var(--bg); margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        header { background: var(--primary); color: white; width: 100%; padding: 30px 0; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        main { width: 90%; max-width: 500px; background: white; margin: 30px 0; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: var(--primary); }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #c0392b; }
+        button:disabled { background: #ccc; }
+        #result-area { margin-top: 25px; display: none; border-top: 2px solid #eee; padding-top: 20px; }
+        #result-text { line-height: 1.8; white-space: pre-wrap; color: #333; font-size: 15px; }
+        .loading { display: none; text-align: center; margin: 20px 0; font-weight: bold; color: var(--accent); }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>🔮 대전 사주 명리관 (AI)</h2>
-        <input type="text" id="userName" placeholder="이름 입력">
-        <input type="date" id="birthDate">
-        <button onclick="getSaju()">AI 사주 분석 시작</button>
-        <div id="result"></div>
+
+<header>
+    <h1>🔮 대전 사주 명리관</h1>
+    <p style="margin:5px 0 0; opacity:0.8;">구글 Gemini AI가 분석하는 정통 사주</p>
+</header>
+
+<main>
+    <div class="form-group">
+        <label for="userName">성함</label>
+        <input type="text" id="userName" placeholder="성함을 입력하세요">
     </div>
+    <div class="form-group">
+        <label for="birthDate">생년월일</label>
+        <input type="date" id="birthDate">
+    </div>
+    <button id="btn" onclick="startAnalysis()">사주 분석 시작</button>
 
-    <script>
-        // 1. 깃허브 액션이 치환할 자리 (언더바 포함하여 정확히 설정)
-        const API_KEY = 'GEMINI_API_KEY_PLACEHOLDER';
+    <div id="loading" class="loading">✨ 대전의 영험한 기운을 분석 중입니다...</div>
 
-        async function getSaju() {
-            const resultDiv = document.getElementById('result');
-            const name = document.getElementById('userName').value;
-            const birth = document.getElementById('birthDate').value;
+    <div id="result-area">
+        <h3 style="color:var(--primary);">분석 결과</h3>
+        <div id="result-text"></div>
+    </div>
+</main>
 
-            if(!name || !birth) return alert("정보를 입력해주세요!");
+<script>
+    // 깃허브 액션이 치환할 변수 (수정하지 마세요)
+    const API_KEY = 'GEMINI_API_KEY_PLACEHOLDER';
 
-            resultDiv.style.display = "block";
-            resultDiv.innerText = "✨ 대전의 기운을 모아 분석 중...";
+    async function startAnalysis() {
+        const name = document.getElementById('userName').value;
+        const birth = document.getElementById('birthDate').value;
+        const btn = document.getElementById('btn');
+        const loading = document.getElementById('loading');
+        const resultArea = document.getElementById('result-area');
+        const resultText = document.getElementById('result-text');
 
-            // 2. 가장 안정적인 구글 v1beta 공식 엔드포인트
-            const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        if (!name || !birth) return alert("정보를 모두 입력해주세요.");
 
-            try {
-                const response = await fetch(URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: `${name}(${birth})의 사주를 대전 명리관 스타일로 분석해줘.` }] }]
-                    })
-                });
+        // UI 상태 설정
+        btn.disabled = true;
+        loading.style.display = "block";
+        resultArea.style.display = "none";
 
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error.message);
-                }
+        // 구글 Gemini API 최신 엔드포인트 (v1beta)
+        const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-                resultDiv.innerText = data.candidates[0].content.parts[0].text;
-            } catch (err) {
-                resultDiv.innerText = "❌ 오류 발생: " + err.message + "\n(키 치환 여부를 확인해주세요)";
+        try {
+            const response = await fetch(URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: `당신은 대전에서 가장 유명한 30년 경력의 사주 명리학자입니다. 이름: ${name}, 생년월일: ${birth}인 사람의 사주를 분석해주세요. 성격의 장점, 올해의 재물운, 그리고 대전의 기운을 담은 따뜻한 조언을 포함해서 친절하게 작성해주세요.`
+                        }]
+                    }]
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.error) {
+                // 에러 발생 시 상세 메시지 출력 (디버깅용)
+                throw new Error(`${data.error.status}: ${data.error.message}`);
             }
+
+            // 결과 출력
+            const analysis = data.candidates[0].content.parts[0].text;
+            resultText.innerText = analysis;
+            resultArea.style.display = "block";
+
+        } catch (error) {
+            console.error(error);
+            resultText.innerText = "❌ 분석 중 오류가 발생했습니다.\n사유: " + error.message + "\n\n잠시 후 다시 시도해주세요.";
+            resultArea.style.display = "block";
+        } finally {
+            btn.disabled = false;
+            loading.style.display = "none";
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
