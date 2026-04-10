@@ -100,6 +100,15 @@ const WEMOJI=["🌙","⚡","🔥","🌿","💰","✨","💤"];
 const WEBHOOK="https://hook.us1.make.com/c7gwi6t5kgu2rfwn37skdwptr71hyyxx";
 const CONCERN_KR={wealth:"재물·금전",love:"애정·관계",career:"커리어·직업",health:"건강·활력",mentor:"귀인·인복",study:"학업·시험운"};
 
+/* ════════════════════════════════════════════
+   [최종 수정] 404 에러 박멸용 통합 설정
+════════════════════════════════════════════ */
+// 1. 모델명 뒤에 버전을 명시하고, 주소 전체를 하나로 합쳤습니다.
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=AIzaSyChP6tjdLWtii4lUArZ77G6kKi9SInfpE8";
+
+/* ════════════════════════════════════════════ */
+
+
 /* ── SEED RANDOM ── */
 function srand(seed){let s=seed;return()=>{s=(s*9301+49297)%233280;return s/233280;};}
 function gseed(f){
@@ -818,120 +827,148 @@ function App(){
     handleDone();
   };
 
-  /* ── Gemini API 설정 ── */
-  const GEMINI_KEY='AIzaSyCkwa5p7PbAbZ62iYxvORlum4T9q1JDmoM';
-  /* gemini-2.0-flash : 2025년 기준 최신 안정 모델 */
-  const GEMINI_URL=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+  /* ── Gemini 지수 백오프 재시도 ── */
+  const fetchWithBackoff=async(options,maxRetries=3)=>{
+    let lastErr;
+    for(let attempt=0;attempt<maxRetries;attempt++){
+      try{
+        const res=await fetch(GEMINI_URL,options);
+        if(res.status===429){
+          const wait=Math.pow(2,attempt)*1500+Math.random()*500;
+          console.warn('[Gemini 429] '+(attempt+1)+'/'+maxRetries+'회, '+Math.round(wait/1000)+'초 대기 후 재시도...');
+          await new Promise(function(r){setTimeout(r,wait);});
+          lastErr=new Error('HTTP_429');
+          continue;
+        }
+        return res;
+      }catch(netErr){
+        lastErr=netErr;
+        if(attempt<maxRetries-1){
+          const wait=Math.pow(2,attempt)*1000;
+          await new Promise(function(r){setTimeout(r,wait);});
+        }
+      }
+    }
+    throw lastErr||new Error('NETWORK_ERROR');
+  };
 
-  const callGemini=async(f,localRep)=>{
-    const concernKRMap={wealth:"재물·금전",love:"애정·관계",career:"커리어·직업",health:"건강·활력",mentor:"귀인·인복",study:"학업·시험운"};
+  const callGemini=async function(f,localRep){
+    const CKR={wealth:'재물·금전',love:'애정·관계',career:'커리어·직업',health:'건강·활력',mentor:'귀인·인복',study:'학업·시험운'};
     const sj=localRep.sj||{};
+    const domName=(localRep.dom&&localRep.dom.name)||'';
+    const weakName=localRep.weakName||'';
 
-    /* ── 프롬프트: JSON 예시에 실제 숫자 대신 설명 표기 (Gemini 혼란 방지) ── */
-    const prompt=
-`너는 20년 경력의 명리학 대가이자 심리상담사야.
-아래 [사용자 정보]를 바탕으로 일주(日柱)를 정확히 도출하고, 그 사람만을 위한 독보적인 사주 풀이를 해줘.
+    /* 프롬프트: 문자열 배열 join — 내부에 백틱 없음 */
+    var lines=[
+      '당신은 사주명리학 40년 경력의 대가입니다.',
+      '아래 사주 정보를 바탕으로 격국(格局), 용신(用神), 신강/신약을 포함한 전문 분석을 수행한 후,',
+      '반드시 순수 JSON 형식으로만 응답하십시오.',
+      '',
+      '[사용자 정보]',
+      '이름: '+(f.name||'익명')+(f.chineseName?' ('+f.chineseName+')':''),
+      '성별: '+(f.gender==='male'?'남성':'여성'),
+      '생년월일: '+(f.birthdate||'')+' / 띠: '+(sj.tiTxt||''),
+      '출생시간: '+(f.birthHour||'모름')+'시',
+      '출생지: '+(f.city||'미입력'),
+      'MBTI: '+(f.mbti||''),
+      '핵심 고민: '+(CKR[f.concern]||f.concern||''),
+      '',
+      '[사전 계산된 사주]',
+      '연주: '+(sj.ySaju||'미상'),
+      '월지: '+(sj.mJi||'미상'),
+      '일주: '+(sj.dGan||'')+(sj.dJi||'')+'일주',
+      '시지: '+(sj.hJi||'미상'),
+      '주도 오행: '+domName,
+      '용신 후보(약한 오행): '+weakName,
+      '',
+      '[분석 필수 항목]',
+      '1. 격국(格局): 일주와 월지의 관계로 정격/변격 판단',
+      '2. 신강/신약: 일간 세력 판단 후 억부용신 적용',
+      '3. 용신(用神)과 기신(忌神): 보완 오행과 피해야 할 오행',
+      '4. MBTI '+(f.mbti||'')+' 와 사주의 교차 분석',
+      '5. 고민 ['+(CKR[f.concern]||'')+'] 에 대한 구체적 전문 조언 — 가장 상세히',
+      '6. 모든 시기는 X월~Y월 형식으로 명시',
+      '',
+      '[출력 규칙]',
+      '- 순수 JSON 객체만 출력. 코드블록이나 마크다운 절대 금지',
+      '- 텍스트 필드 값은 줄바꿈 없이 한 줄로 작성',
+      '- overall 350자 이상, 각 항목 250자 이상',
+      '- 뻔한 표현 금지',
+      '- lotto: 1~45 중복 없는 숫자 6개씩 5세트, 사주 오행 기반 생성',
+      '',
+      '[응답 형식 — 이 구조 그대로, 값만 채울 것]',
+      '{"overall":"...","wealthDeep":"...","loveDeep":"...","careerDeep":"...","healthDeep":"...","habitDeep":"...","mentorDeep":"...","studyDeep":"...","lotto":[[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n]]}'
+    ];
+    var prompt=lines.join('\n');
 
-[사용자 정보]
-이름: ${f.name||'익명'}${f.chineseName?' ('+f.chineseName+')':''}
-성별: ${f.gender==='male'?'남성':'여성'}
-생년월일: ${f.birthdate||''} (${sj.tiTxt||''})
-출생시간: ${f.birthHour||'모름'}
-출생도시: ${f.city||'미입력'}
-MBTI: ${f.mbti||''}
-가장 큰 고민: ${concernKRMap[f.concern]||f.concern||''}
-일주(日柱): ${sj.dGan||''}${sj.dJi||''}일주
-월지(月支): ${sj.mJi||''}
-연주(年柱): ${sj.ySaju||''}
-주도 오행: ${localRep.dom&&localRep.dom.name?localRep.dom.name:''}
-용신(부족한 오행): ${localRep.weakName||''}
+    /* API 호출 */
+    var requestBody=JSON.stringify({
+      contents:[{parts:[{text:prompt}]}],
+      generationConfig:{temperature:0.85,topP:0.95,maxOutputTokens:4096}
+    });
+    var requestOptions={
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:requestBody
+    };
 
-[출력 규칙 — 반드시 준수]
-1. 응답 전체가 반드시 올바른 JSON 객체여야 한다. 마크다운, 코드블록, 추가 설명 절대 금지.
-2. 아래 키를 모두 포함할 것:
-   overall / wealthDeep / loveDeep / careerDeep / healthDeep / habitDeep / mentorDeep / studyDeep / lotto
-3. overall은 300자 이상, 나머지 텍스트 필드는 200자 이상으로 작성.
-4. 뻔한 표현("올해는 좋은 해입니다" 등) 절대 금지. 일주·월지 상호작용을 반드시 언급.
-5. 고민 항목 "${concernKRMap[f.concern]||''}"을 특히 깊이 분석할 것.
-6. 시기 표현은 반드시 "X월~Y월" 형식으로 구체적으로 명시.
-7. lotto는 1~45 사이 정수, 중복 없이, 5개 세트 × 6개 숫자 배열. 사주 오행에 맞게 생성.
-8. 모든 내용은 한국어로 작성.
-
-응답 형식 (이 형식 그대로, 값만 채워서 출력):
-{"overall":"...","wealthDeep":"...","loveDeep":"...","careerDeep":"...","healthDeep":"...","habitDeep":"...","mentorDeep":"...","studyDeep":"...","lotto":[[숫자6개],[숫자6개],[숫자6개],[숫자6개],[숫자6개]]}`;
-
-    /* ── API 호출 ── */
-    let res;
+    var res;
     try{
-      res=await fetch(GEMINI_URL,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          contents:[{parts:[{text:prompt}]}],
-          generationConfig:{
-            temperature:0.85,
-            topP:0.95,
-            maxOutputTokens:4096,
-          },
-        }),
-      });
+      res=await fetchWithBackoff(requestOptions,3);
     }catch(netErr){
-      console.error('[Gemini 네트워크 오류]',netErr);
-      throw new Error('NETWORK_ERROR');
+      console.error('[Gemini 네트워크 실패]',netErr);
+      throw new Error(netErr.message||'NETWORK_ERROR');
     }
 
     if(!res.ok){
-      const errStatus=res.status;
-      const errBody=await res.text().catch(()=>'');
-      console.error(`[Gemini HTTP ${errStatus}]`,errBody.slice(0,200));
-      throw new Error('HTTP_'+errStatus);
+      var status=res.status;
+      var body=await res.text().catch(function(){return '';});
+      console.error('[Gemini HTTP '+status+']',body.slice(0,300));
+      throw new Error('HTTP_'+status);
     }
 
-    const data=await res.json();
-    console.log('[Gemini 응답 수신]',JSON.stringify(data).slice(0,300));
+    var data=await res.json();
+    var raw=(data&&data.candidates&&data.candidates[0]&&
+             data.candidates[0].content&&data.candidates[0].content.parts&&
+             data.candidates[0].content.parts[0]&&
+             data.candidates[0].content.parts[0].text)||'';
 
-    const raw=(data?.candidates?.[0]?.content?.parts?.[0]?.text)||'';
     if(!raw){
-      console.error('[Gemini 빈 응답] 전체 응답:',JSON.stringify(data).slice(0,500));
+      console.error('[Gemini 빈 응답]',JSON.stringify(data).slice(0,400));
       throw new Error('EMPTY_RESPONSE');
     }
-    console.log('[Gemini 원본 텍스트]',raw.slice(0,400));
+    console.log('[Gemini 원본]',raw.slice(0,200));
 
-    /* ── 철저한 JSON 추출 ── */
-    /* 1) 마크다운 코드블록 제거 (멀티라인 플래그 필요 없이 전역 치환) */
-    let cleaned=raw
-      .replace(/```json/gi,'')
-      .replace(/```/g,'')
-      .trim();
-
-    /* 2) 첫 { 부터 마지막 } 까지만 추출 */
-    const jStart=cleaned.indexOf('{');
-    const jEnd  =cleaned.lastIndexOf('}');
-    if(jStart<0||jEnd<=jStart){
-      console.error('[JSON 추출 실패] cleaned:',cleaned.slice(0,300));
+    /* JSON 추출 파이프라인 */
+    var c=raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+    var s2=c.indexOf('{');
+    var e2=c.lastIndexOf('}');
+    if(s2<0||e2<=s2){
+      console.error('[JSON 추출 실패]',c.slice(0,200));
       throw new Error('JSON_NOT_FOUND');
     }
-    cleaned=cleaned.slice(jStart,jEnd+1);
-
-    /* 3) JSON 문자열 내부의 줄바꿈 이스케이프 처리 (파싱 실패 방지) */
-    /* 문자열 값 안의 실제 개행문자를 \\n으로 치환 */
-    cleaned=cleaned.replace(/:\s*"([\s\S]*?)"/g,(match,val)=>{
-      const escaped=val.replace(/\n/g,'\\n').replace(/\r/g,'');
-      return ': "'+escaped+'"';
+    c=c.slice(s2,e2+1);
+    /* 문자열 값 내부 실제 개행 → \\n 치환 */
+    c=c.replace(/"((?:[^"\\]|\\.)*)"/g,function(m,v){
+      return '"'+v.replace(/\r?\n/g,'\\n')+'"';
     });
+    /* 제어문자 제거 */
+    c=c.replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g,'');
 
-    let parsed;
+    var parsed;
     try{
-      parsed=JSON.parse(cleaned);
-    }catch(parseErr){
-      console.error('[JSON 파싱 실패]',parseErr.message,'cleaned:',cleaned.slice(0,500));
+      parsed=JSON.parse(c);
+    }catch(pe){
+      console.error('[JSON 파싱 실패]',pe.message,c.slice(0,300));
       throw new Error('PARSE_ERROR');
     }
-
-    console.log('[Gemini 파싱 성공] keys:',Object.keys(parsed));
+    console.log('[Gemini 파싱 성공]',Object.keys(parsed).join(', '));
     return parsed;
   };
 
+
+
+  
 
     const handleDone=useCallback(async()=>{
     /* 1) 로컬 사주 엔진 — 오행·점수 즉시 계산 (Gemini 대기 동안 UI 준비) */
