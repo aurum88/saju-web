@@ -83,9 +83,9 @@ const {useState,useEffect,useRef,useCallback}=React;
 
 /* ══════════════════════════════════════════════════
    ★ API 키 — GitHub Actions가 배포 직전에 치환
-   ★ sed -i 's/AIzaSyAAGGsgQD2y8ZPoT5bPqQ-EtbFL7VRcOdI/실제키/' index.html
+   ★ sed -i 's/GEMINI_API_KEY_PLACEHOLDER/실제키/' index.html
 ══════════════════════════════════════════════════ */
-const API_KEY='AIzaSyAAGGsgQD2y8ZPoT5bPqQ-EtbFL7VRcOdI';
+const API_KEY='GEMINI_API_KEY_PLACEHOLDER';
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
 /* ── 공통 상수 ── */
