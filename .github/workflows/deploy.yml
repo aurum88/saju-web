@@ -3,25 +3,27 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # 만약 대표님 저장소의 기본 브랜치가 'master'라면 master로 고쳐주세요.
-
-permissions:
-  contents: write # 깃허브가 파일을 수정하고 배포할 권한을 줍니다.
+      - main  # 메인 브랜치에 코드가 올라올 때마다 작동합니다.
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4 # 최신 버전 사용
 
+    steps:
+      # 1. 깃허브 저장소의 코드를 가져옵니다.
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      # 2. index.html 안의 가짜 이름표를 진짜 API 키로 교체합니다. (가장 중요!)
       - name: Replace API Key in HTML
         run: |
-          # 코드의 'GEMINI_API_KEY_PLACEHOLDER'를 깃허브 금고의 키로 교체합니다.
+          # 깃허브 금고(Secrets)에 저장된 GEMINI_API_KEY를 가져와서 
+          # index.html의 'GEMINI_API_KEY_PLACEHOLDER'라는 글자를 찾아 통째로 바꿉니다.
           sed -i "s|GEMINI_API_KEY_PLACEHOLDER|${{ secrets.GEMINI_API_KEY }}|g" index.html
 
+      # 3. 수정된 파일을 깃허브 페이지 전용 브랜치(gh-pages)로 보냅니다.
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: . # 현재 폴더 전체를 배포합니다.
-          branch: gh-pages # 'gh-pages'라는 이름의 배포 전용 브랜치로 보냅니다.
+          folder: .        # 현재 폴더 전체를 배포합니다.
+          branch: gh-pages # 배포용 브랜치 이름입니다.
