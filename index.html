@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>My Saju Master — MBTI × 사주 심층 분석</title>
-<!-- ── Google Analytics 4 (G-7DSMMXMJV1) ── -->
+<title>아우름사주 — AI × 사주 심층 분석</title>
+<!-- ── Google Analytics 4 ── -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-7DSMMXMJV1"></script>
 <script>
   window.dataLayer=window.dataLayer||[];
@@ -12,51 +12,105 @@
   gtag('js',new Date());
   gtag('config','G-7DSMMXMJV1');
 </script>
-<!-- ── End GA4 ── -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
+/* ── 리셋 & 베이스 ── */
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%;background:#050510;font-family:'Noto Sans KR',sans-serif;}
-@keyframes twinkle{0%,100%{opacity:.1;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+html,body{min-height:100%;background:#050510;font-family:'Noto Sans KR',sans-serif;color:#e2d9f3;-webkit-text-size-adjust:100%}
+
+/* ── 키프레임 ── */
+@keyframes twinkle{0%,100%{opacity:.08;transform:scale(1)}50%{opacity:1;transform:scale(1.5)}}
 @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 @keyframes rise{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
-@keyframes riseR{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes riseUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 @keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
-@keyframes logoGlow{0%,100%{text-shadow:0 0 20px rgba(167,139,250,.5)}50%{text-shadow:0 0 40px rgba(167,139,250,.9),0 0 80px rgba(99,102,241,.4)}}
-@keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,.4)}50%{box-shadow:0 0 50px rgba(139,92,246,.8),0 0 90px rgba(59,130,246,.4)}}
+@keyframes logoGlow{0%,100%{text-shadow:0 0 20px rgba(167,139,250,.5)}50%{text-shadow:0 0 44px rgba(167,139,250,1),0 0 80px rgba(99,102,241,.5)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 22px rgba(139,92,246,.45)}50%{box-shadow:0 0 55px rgba(139,92,246,.85),0 0 90px rgba(59,130,246,.4)}}
 @keyframes scanLine{0%{top:-2px;opacity:0}5%{opacity:1}88%{top:100%;opacity:.5}100%{top:100%;opacity:0}}
 @keyframes orbit{from{transform:rotate(0deg) translateX(62px)}to{transform:rotate(360deg) translateX(62px)}}
-@keyframes lottoFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-4px) scale(1.04)}}
-@keyframes goldPulse{0%,100%{box-shadow:0 0 12px rgba(251,191,36,.4),0 0 24px rgba(251,191,36,.2)}50%{box-shadow:0 0 22px rgba(251,191,36,.8),0 0 44px rgba(251,191,36,.4)}}
-.text-shimmer{background:linear-gradient(90deg,#a78bfa,#60a5fa,#f0abfc,#a78bfa);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
+@keyframes lottoBounce{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-5px) scale(1.06)}}
+@keyframes goldPulse{0%,100%{box-shadow:0 0 10px rgba(251,191,36,.4)}50%{box-shadow:0 0 22px rgba(251,191,36,.85),0 0 40px rgba(251,191,36,.3)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes progressFill{from{width:0%}to{width:100%}}
+
+/* ── 유틸 ── */
+.shimmer{background:linear-gradient(90deg,#a78bfa,#60a5fa,#f0abfc,#a78bfa);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite}
 .neo-glow{animation:pulseGlow 3s ease-in-out infinite}
 .logo-glow{animation:logoGlow 3s ease-in-out infinite}
-.lotto-ball{animation:lottoFloat 2.5s ease-in-out infinite,goldPulse 2.5s ease-in-out infinite}
+.lotto-ball{animation:lottoBounce 2.5s ease-in-out infinite,goldPulse 2.5s ease-in-out infinite}
+.ai-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;background:linear-gradient(135deg,rgba(16,185,129,.18),rgba(6,182,212,.12));border:1px solid rgba(16,185,129,.35);color:#6ee7b7;font-size:.62rem;font-weight:700;letter-spacing:.08em}
+
+/* ── 폼 컴포넌트 ── */
 select option{background:#1a1a3e;color:#e2d9f3}
-input[type=date]::-webkit-calendar-picker-indicator{filter:invert(0.6) sepia(1) saturate(2) hue-rotate(220deg);cursor:pointer}
+input[type=date]::-webkit-calendar-picker-indicator{filter:invert(.6) sepia(1) saturate(2) hue-rotate(220deg);cursor:pointer}
 input::placeholder{color:rgba(167,139,250,.3)}
 select{-webkit-appearance:none}
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(139,92,246,.4);border-radius:2px}
-.accordion-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
-.accordion-body.open{max-height:900px}
+
+/* ── 아코디언 ── */
+.acc-body{max-height:0;overflow:hidden;transition:max-height .5s cubic-bezier(.4,0,.2,1)}
+.acc-body.open{max-height:3000px}
+
+/* ── 마크다운 렌더 ── */
+.md-content{line-height:1.9;font-size:.82rem;color:rgba(209,213,219,.88)}
+.md-content p{margin-bottom:.7em}
+.md-content strong{color:#e2d9f3;font-weight:700}
+.md-content em{color:#c4b5fd;font-style:italic}
+.md-content ul,.md-content ol{padding-left:1.3em;margin-bottom:.7em}
+.md-content li{margin-bottom:.35em}
+.md-content h3,.md-content h4{color:#a78bfa;font-weight:700;margin:.8em 0 .35em;font-family:'Noto Serif KR',serif}
+.md-content blockquote{border-left:3px solid rgba(167,139,250,.45);padding-left:.9em;color:rgba(209,213,219,.65);margin:.5em 0}
+.md-content hr{border:none;border-top:1px solid rgba(255,255,255,.08);margin:.8em 0}
+.md-content code{background:rgba(139,92,246,.18);padding:2px 6px;border-radius:4px;font-size:.78rem;color:#c4b5fd}
+
+/* ── 인쇄 ── */
 @media print{.no-print{display:none!important}}
 </style>
 </head>
 <body>
 <div id="root"></div>
+
+<!-- marked.js: 마크다운 → HTML 변환 -->
+<script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
 <script type="text/babel">
 const {useState,useEffect,useRef,useCallback}=React;
 
-/* ── CONSTANTS ── */
-const MBTI=["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
-const HOURS=Array.from({length:25},(_,i)=>i===24?"모름":`${String(i).padStart(2,'0')}:00`);
+/* ══════════════════════════════════════════════════
+   ★ API 키 — GitHub Actions가 배포 직전에 치환
+   ★ sed -i 's/AIzaSyAqhYU9DVZAH9wVHxUVZU00Rqf-c9xnzEc/실제키/' index.html
+══════════════════════════════════════════════════ */
+const API_KEY='AIzaSyAqhYU9DVZAH9wVHxUVZU00Rqf-c9xnzEc';
+const GEMINI_URL='https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key='+API_KEY;
+
+/* ── 공통 상수 ── */
+const MBTI_LIST=["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
+const HOURS_LIST=Array.from({length:25},(_,i)=>i===24?"모름":String(i).padStart(2,'0')+":00");
+const CONCERN_KR={wealth:"재물·금전",love:"애정·관계",career:"커리어·직업",health:"건강·활력",mentor:"귀인·인복",study:"학업·시험운"};
+const CONCERNS=[
+  {id:"wealth",label:"재물·금전",icon:"💰",desc:"재정과 풍요로움"},
+  {id:"love",  label:"애정·관계",icon:"💕",desc:"사랑과 인연"},
+  {id:"career",label:"커리어·직업",icon:"🚀",desc:"성공과 성취"},
+  {id:"health",label:"건강·활력",icon:"🌿",desc:"몸과 마음의 균형"},
+  {id:"mentor",label:"귀인·인복",icon:"🤝",desc:"귀인과 인연의 복"},
+  {id:"study", label:"학업·시험운",icon:"📚",desc:"학업과 합격의 기운"},
+];
+const OHENG=[
+  {name:"목 木",color:"#4ade80",shadow:"rgba(74,222,128,.5)",emoji:"🌿"},
+  {name:"화 火",color:"#f87171",shadow:"rgba(248,113,113,.5)",emoji:"🔥"},
+  {name:"토 土",color:"#fbbf24",shadow:"rgba(251,191,36,.5)",emoji:"🌍"},
+  {name:"금 金",color:"#e2e8f0",shadow:"rgba(226,232,240,.5)",emoji:"⚡"},
+  {name:"수 Water",color:"#60a5fa",shadow:"rgba(96,165,250,.5)",emoji:"💧"},
+];
+const WDAYS=["월","화","수","목","금","토","일"];
+const WEMOJI=["🌙","⚡","🔥","🌿","💰","✨","💤"];
+const WEBHOOK="https://hook.us1.make.com/c7gwi6t5kgu2rfwn37skdwptr71hyyxx";
+
 const CITIES=[
   "선택 안 함",
   "── 특별시·광역시 ──",
@@ -79,81 +133,9 @@ const CITIES=[
   "── 제주 ──",
   "제주특별자치도","제주시","서귀포시",
 ];
-const CITY_DISABLED=["선택 안 함","── 특별시·광역시 ──","── 경기·강원 ──","── 충청북도 ──","── 충청남도 ──","── 전북특별자치도 ──","── 전라남도 ──","── 경상북도 ──","── 경상남도 ──","── 제주 ──"];
-const CONCERNS=[
-  {id:"wealth",label:"재물·금전",icon:"💰",desc:"재정과 풍요로움"},
-  {id:"love",label:"애정·관계",icon:"💕",desc:"사랑과 인연"},
-  {id:"career",label:"커리어·직업",icon:"🚀",desc:"성공과 성취"},
-  {id:"health",label:"건강·활력",icon:"🌿",desc:"몸과 마음의 균형"},
-  {id:"mentor",label:"귀인·인복",icon:"🤝",desc:"귀인과 인연의 복"},
-  {id:"study",label:"학업·시험운",icon:"📚",desc:"학업과 합격의 기운"},
-];
-const OHENG=[
-  {name:"목 木",color:"#4ade80",shadow:"rgba(74,222,128,0.5)",emoji:"🌿"},
-  {name:"화 火",color:"#f87171",shadow:"rgba(248,113,113,0.5)",emoji:"🔥"},
-  {name:"토 土",color:"#fbbf24",shadow:"rgba(251,191,36,0.5)",emoji:"🌍"},
-  {name:"금 金",color:"#e2e8f0",shadow:"rgba(226,232,240,0.5)",emoji:"⚡"},
-  {name:"수 水",color:"#60a5fa",shadow:"rgba(96,165,250,0.5)",emoji:"💧"},
-];
-const WDAYS=["월","화","수","목","금","토","일"];
-const WEMOJI=["🌙","⚡","🔥","🌿","💰","✨","💤"];
-const WEBHOOK="https://hook.us1.make.com/c7gwi6t5kgu2rfwn37skdwptr71hyyxx";
-const CONCERN_KR={wealth:"재물·금전",love:"애정·관계",career:"커리어·직업",health:"건강·활력",mentor:"귀인·인복",study:"학업·시험운"};
+const CITY_DISABLED=new Set(["선택 안 함","── 특별시·광역시 ──","── 경기·강원 ──","── 충청북도 ──","── 충청남도 ──","── 전북특별자치도 ──","── 전라남도 ──","── 경상북도 ──","── 경상남도 ──","── 제주 ──"]);
 
-/* ════════════════════════════════════════════
-   [끝장판] 404 에러 박멸을 위한 모델 변경 주소
-════════════════════════════════════════════ */
-
-// 1. 모델을 gemini-pro로 변경 (flash가 404 날 때의 확실한 대안)
-const MODEL_NAME = "gemini-pro"; 
-const API_VERSION = "v1";
-
-// 2. 반드시 새로 발급받은 '새 API 키'를 아래에 넣으세요!
-const NEW_API_KEY = "AIzaSyBqTjHIYS65laYL1FdB9FL8XJgd3WiJvBM";
-
-const GEMINI_URL = `https://generativelanguage.googleapis.com/${API_VERSION}/models/${MODEL_NAME}:generateContent?key=${NEW_API_KEY}`;
-
-/* ════════════════════════════════════════════ */
-
-/* ── SEED RANDOM ── */
-function srand(seed){let s=seed;return()=>{s=(s*9301+49297)%233280;return s/233280;};}
-function gseed(f){
-  /* 명리학 입력 변수를 최대한 활용해 고유 시드 생성
-     이름(한글+한자) + 생년월일(년·월·일) + 출생시간 + 성별 + 도시 + MBTI + 고민
-     → 동일 조건 반복 입력 시 항상 같은 결과 (재현성 보장)
-     → 조건이 조금만 달라도 완전히 다른 결과 (개인화 보장) */
-  const name=(f.name||'가')+(f.chineseName||'');
-  const birth=(f.birthdate||'2000-01-01');
-  const [yy,mm,dd]=(birth+'-01-01').split('-').map(Number);
-  const hour=parseInt((f.birthHour||'0'),10)||0;
-  const gender=f.gender==='male'?3:f.gender==='female'?7:1;
-  const city=f.city||'';
-  const mbti=f.mbti||'INFP';
-  const concern=f.concern||'wealth';
-  /* 가중치를 달리 줘서 각 변수가 결과에 충분히 반영되도록 */
-  const base=name.split('').reduce((a,c)=>a+c.charCodeAt(0)*31,0)
-    +yy*367+mm*29+dd*11+hour*97
-    +gender*53
-    +city.split('').reduce((a,c)=>a+c.charCodeAt(0)*17,0)
-    +mbti.split('').reduce((a,c)=>a+c.charCodeAt(0)*43,0)
-    +concern.split('').reduce((a,c)=>a+c.charCodeAt(0)*13,0);
-  return Math.abs(base)%999983; // 소수로 나눠 분포 균일화
-}
-
-/* ── LOTTO GENERATOR ── */
-function genLotto(rand){
-  const sets=[];
-  for(let s=0;s<5;s++){
-    const pool=new Set();
-    while(pool.size<6)pool.add(Math.floor(rand()*45)+1);
-    sets.push([...pool].sort((a,b)=>a-b));
-  }
-  return sets;
-}
-
-/* ── SAJU ENGINE: 실제 명리학 기반 계산 ── */
-
-/* 60갑자 */
+/* ── 60갑자 & 명리학 엔진 ── */
 const GANJIS=["갑자","을축","병인","정묘","무진","기사","경오","신미","임신","계유","갑술","을해","병자","정축","무인","기묘","경진","신사","임오","계미","갑신","을유","병술","정해","무자","기축","경인","신묘","임진","계사","갑오","을미","병신","정유","무술","기해","경자","신축","임인","계묘","갑진","을사","병오","정미","무신","기유","경술","신해","임자","계축","갑인","을묘","병진","정사","무오","기미","경신","신유","임술","계해"];
 const CG_OH={갑:"목",을:"목",병:"화",정:"화",무:"토",기:"토",경:"금",신:"금",임:"수",계:"수"};
 const JJ_OH={자:"수",축:"토",인:"목",묘:"목",진:"토",사:"화",오:"화",미:"토",신:"금",유:"금",술:"토",해:"수"};
@@ -161,122 +143,201 @@ const JJ_TI={자:"쥐",축:"소",인:"호랑이",묘:"토끼",진:"용",사:"뱀
 const MON_JJ=["","인","묘","진","사","오","미","신","유","술","해","자","축"];
 
 function getSaju(birthdate,birthHour){
-  const parts=(birthdate||'2000-01-01').split('-');
-  const y=parseInt(parts[0])||2000,m=parseInt(parts[1])||1,d=parseInt(parts[2])||1;
+  const p=(birthdate||'2000-01-01').split('-');
+  const y=parseInt(p[0])||2000,m=parseInt(p[1])||1,d=parseInt(p[2])||1;
   const h=parseInt(birthHour)||0;
-  /* 연주 */
   const yIdx=((y-1924)%60+60)%60;
   const yS=GANJIS[yIdx]||GANJIS[0];
-  /* 월지 */
   const mJ=MON_JJ[m]||"인";
-  /* 일주 — 율리우스적일수 */
   const a=Math.floor((14-m)/12);
   const yy=y-a,mm=m+12*a-2;
   const jd=d+Math.floor((153*mm+2)/5)+365*yy+Math.floor(yy/4)-Math.floor(yy/100)+Math.floor(yy/400)-32045;
   const dIdx=((jd-10)%60+60)%60;
   const dS=GANJIS[dIdx]||GANJIS[0];
-  /* 시지 */
   const hJiArr=["자","축","인","묘","진","사","오","미","신","유","술","해"];
   const hJ=hJiArr[Math.min(11,Math.floor((h+1)/2))];
-  return{ySaju:yS,mJi:mJ,dSaju:dS,hJi:hJ,
-    yGan:yS[0],yJi:yS[1],dGan:dS[0],dJi:dS[1],
-    ti:JJ_TI[yS[1]]||"용",y,m,d,h};
+  return{ySaju:yS,mJi:mJ,dSaju:dS,hJi:hJ,yGan:yS[0],yJi:yS[1],dGan:dS[0],dJi:dS[1],ti:JJ_TI[yS[1]]||"용",y,m,d,h,tiTxt:(JJ_TI[yS[1]]||"용")+"띠"};
 }
 
-function calcOhengFromSaju(sj,gender,rand){
+function srand(seed){let s=seed;return()=>{s=(s*9301+49297)%233280;return s/233280;};}
+function gseed(f){
+  const name=(f.name||'가')+(f.chineseName||'');
+  const b=(f.birthdate||'2000-01-01').split('-').map(Number);
+  const hour=parseInt(f.birthHour)||0;
+  const gender=f.gender==='male'?3:f.gender==='female'?7:1;
+  const base=name.split('').reduce((a,c)=>a+c.charCodeAt(0)*31,0)
+    +(b[0]||2000)*367+(b[1]||1)*29+(b[2]||1)*11+hour*97+gender*53
+    +(f.city||'').split('').reduce((a,c)=>a+c.charCodeAt(0)*17,0)
+    +(f.mbti||'INFP').split('').reduce((a,c)=>a+c.charCodeAt(0)*43,0)
+    +(f.concern||'wealth').split('').reduce((a,c)=>a+c.charCodeAt(0)*13,0);
+  return Math.abs(base)%999983;
+}
+
+function genLotto(rand){
+  return Array.from({length:5},()=>{
+    const p=new Set();while(p.size<6)p.add(Math.floor(rand()*45)+1);
+    return [...p].sort((a,b)=>a-b);
+  });
+}
+
+function calcOheng(sj,gender,rand){
   const cnt={목:0,화:0,토:0,금:0,수:0};
   const addG=g=>{if(g&&CG_OH[g])cnt[CG_OH[g]]+=2;};
   const addJ=j=>{if(j&&JJ_OH[j])cnt[JJ_OH[j]]+=1.5;};
-  addG(sj.yGan);addJ(sj.yJi);
-  addJ(sj.mJi);
-  addG(sj.dGan);addJ(sj.dJi);
-  addJ(sj.hJi);
-  /* 성별 보정 */
-  if(gender==='male'){cnt.화+=0.6;cnt.목+=0.4;}
-  else{cnt.수+=0.6;cnt.금+=0.4;}
-  /* 자연 변동성 (시드 연동) */
-  Object.keys(cnt).forEach(k=>cnt[k]+=rand()*0.6);
-  Object.keys(cnt).forEach(k=>{if(cnt[k]<0.5)cnt[k]=0.5+rand()*0.3;});
+  addG(sj.yGan);addJ(sj.yJi);addJ(sj.mJi);addG(sj.dGan);addJ(sj.dJi);addJ(sj.hJi);
+  if(gender==='male'){cnt.화+=0.6;cnt.목+=0.4;}else{cnt.수+=0.6;cnt.금+=0.4;}
+  Object.keys(cnt).forEach(k=>{cnt[k]+=rand()*0.6;if(cnt[k]<0.5)cnt[k]=0.5+rand()*0.3;});
   const tot=Object.values(cnt).reduce((a,b)=>a+b,0);
-  const keyMap={"목 木":"목","화 火":"화","토 土":"토","금 金":"금","수 水":"수"};
-  return OHENG.map(o=>({...o,pct:Math.round((cnt[keyMap[o.name]]||0)/tot*100)}));
+  const km={"목 木":"목","화 火":"화","토 土":"토","금 金":"금","수 Water":"수"};
+  return OHENG.map(o=>({...o,pct:Math.round((cnt[km[o.name]]||0)/tot*100)}));
 }
 
-/* ── REPORT GENERATOR (명리학 기반 완전 재설계) ── */
-function genReport(f){
+function genLocalReport(f){
   const sj=getSaju(f.birthdate,parseInt(f.birthHour)||0);
   const rand=srand(gseed(f));
-
-  /* 오행 밸런스 — 실제 사주 4기둥 계산 */
-  const oheng=calcOhengFromSaju(sj,f.gender,rand);
+  const oheng=calcOheng(sj,f.gender,rand);
   const dom=oheng.reduce((a,b)=>a.pct>b.pct?a:b);
   const weak=oheng.reduce((a,b)=>a.pct<b.pct?a:b);
-
-  /* 일주 강약 점수 (천간·지지 조합) */
-  const ganScore={갑:8,을:7,병:9,정:8,무:6,기:7,경:7,신:8,임:9,계:7};
-  const jiScore={자:8,축:6,인:9,묘:8,진:7,사:9,오:8,미:7,신:7,유:8,술:6,해:9};
-  const dGanV=ganScore[sj.dGan]||7;
-  const dJiV=jiScore[sj.dJi]||7;
-  const baseScore=dGanV*5+dJiV*3; /* 55~72 범위 */
+  const LMAP={
+    "목 木":{color:"초록·에메랄드",hex:"#4ade80",item:"나무 소재 액세서리",fashion:"그린 & 베이지 자연 소재",gem:"에메랄드·비취",food:"녹차·브로콜리·아보카도",place:"공원·숲·식물원",number:"3, 8"},
+    "화 火":{color:"레드·오렌지·핑크",hex:"#f87171",item:"루비 반지·산호석",fashion:"붉은 포인트 V넥",gem:"루비·가넷",food:"고추·토마토·석류",place:"카페·남향 공간",number:"2, 7"},
+    "토 土":{color:"황토·아이보리·골드",hex:"#fbbf24",item:"황동 열쇠고리",fashion:"어스톤 레이어드 룩",gem:"시트린·호안석",food:"고구마·된장·황금 키위",place:"박물관·전통 한옥",number:"5, 0"},
+    "금 金":{color:"화이트·실버·아이스블루",hex:"#c0cfe8",item:"실버 체인 목걸이",fashion:"모노크롬 화이트 메탈릭",gem:"다이아몬드·백수정",food:"배·흰쌀·두부",place:"미술관·도서관",number:"4, 9"},
+    "수 Water":{color:"딥블루·네이비·검정",hex:"#60a5fa",item:"청금석 브레이슬릿",fashion:"네이비·블랙 미니멀",gem:"사파이어·라피스라줄리",food:"검은콩·미역·블루베리",place:"바다·강변·온천",number:"1, 6"},
+  };
+  const lucky=LMAP[dom.name]||LMAP["수 Water"];
+  const ganS={갑:8,을:7,병:9,정:8,무:6,기:7,경:7,신:8,임:9,계:7};
+  const jiS={자:8,축:6,인:9,묘:8,진:7,사:9,오:8,미:7,신:7,유:8,술:6,해:9};
+  const base=(ganS[sj.dGan]||7)*5+(jiS[sj.dJi]||7)*3;
   const mb=f.gender==='male'?2:-2;
-  const cs=(add)=>Math.max(52,Math.min(96,Math.round(baseScore+add+rand()*14-7)));
-
-  const wealth=cs(dom.name.includes("토")?7:dom.name.includes("금")?5:mb);
-  const love  =cs(dom.name.includes("수")?6:dom.name.includes("화")?4:-mb*0.5);
-  const career=cs(dom.name.includes("화")?7:dom.name.includes("목")?4:mb*0.5);
-  const health=cs(dom.name.includes("목")?6:dom.name.includes("수")?4:0);
-  const mentor=cs(weak.pct<12?9:weak.pct<17?5:0);
-  const study =cs(dom.name.includes("금")?7:dom.name.includes("수")?5:0);
-
+  const cs=add=>Math.max(52,Math.min(96,Math.round(base+add+rand()*14-7)));
+  const sc={
+    wealth:cs(dom.name.includes("토")?7:dom.name.includes("금")?5:mb),
+    love:  cs(dom.name.includes("수")?6:dom.name.includes("화")?4:-mb*.5),
+    career:cs(dom.name.includes("화")?7:dom.name.includes("목")?4:mb*.5),
+    health:cs(dom.name.includes("목")?6:dom.name.includes("수")?4:0),
+    mentor:cs(weak.pct<12?9:weak.pct<17?5:0),
+    study: cs(dom.name.includes("금")?7:dom.name.includes("수")?5:0),
+  };
   const week=WDAYS.map((d,i)=>({day:d,emoji:WEMOJI[i],val:Math.floor(rand()*60+30),lbl:rand()>.6?"길":rand()>.4?"중":"소"}));
   const lotto=genLotto(rand);
-
-  const traits={INTJ:"전략적 직관력",INTP:"분석적 통찰",ENTJ:"카리스마적 리더십",ENTP:"혁신적 발상",INFJ:"예언적 감수성",INFP:"이상주의적 창의성",ENFJ:"공감 리더십",ENFP:"열정적 영감",ISTJ:"철저한 완성도",ISFJ:"헌신적 안정감",ESTJ:"실행력 있는 추진",ESFJ:"따뜻한 결속력",ISTP:"냉철한 기술력",ISFP:"섬세한 감성미",ESTP:"즉각적 행동력",ESFP:"생동감 있는 에너지"};
-  const luckMap={
-    "목 木":{color:"초록·에메랄드",hex:"#4ade80",item:"나무 소재 액세서리",fashion:"자연 소재 그린 & 베이지 톤",gem:"에메랄드·비취",food:"녹차·브로콜리·아보카도",place:"공원·숲·식물원",number:"3, 8"},
-    "화 火":{color:"레드·오렌지·핑크",hex:"#f87171",item:"루비 반지·산호석",fashion:"붉은 포인트 컬러 V넥",gem:"루비·가넷",food:"고추·토마토·석류",place:"카페·남향 공간·야외 테라스",number:"2, 7"},
-    "토 土":{color:"황토·아이보리·골드",hex:"#fbbf24",item:"황동 열쇠고리·황토 도자기",fashion:"어스톤 레이어드 룩",gem:"시트린·호안석",food:"고구마·된장·황금 키위",place:"박물관·고즈넉한 카페·전통 한옥",number:"5, 0"},
-    "금 金":{color:"화이트·실버·아이스블루",hex:"#c0cfe8",item:"실버 체인 목걸이·백수정",fashion:"모노크롬 화이트 메탈릭",gem:"다이아몬드·백수정",food:"배·흰쌀·두부·우유",place:"미술관·도서관·고급 호텔 라운지",number:"4, 9"},
-    "수 水":{color:"딥블루·네이비·검정",hex:"#60a5fa",item:"청금석 브레이슬릿",fashion:"네이비·블랙 미니멀 시크",gem:"사파이어·라피스라줄리",food:"검은콩·미역·블루베리",place:"바다·강변·수영장·온천",number:"1, 6"},
-  };
-  const lucky=luckMap[dom.name]||luckMap["수 水"];
-  const trait=traits[f.mbti]||"독특한 개성";
-  const nm=f.name||"고객님";
-
-  /* ── 명리학 맞춤 텍스트 변수 ── */
-  const tiTxt=`${sj.ti}띠`;
-  const ilJu=`${sj.dGan}${sj.dJi}일주`;
-  const weakName=weak.name.replace(/ .+/,""); /* "목","화" 등 */
-  const gTxt=f.gender==='male'?"양(陽)":"음(陰)";
-  const m2=(n)=>{const v=sj.m+n;return v>12?v-12:v<1?v+12:v;};
-  const domBodyPart={"목 木":"간·담·근육·눈","화 火":"심장·소장·혈관·혀","토 土":"비장·위장·소화기·입","금 金":"폐·대장·피부·코","수 Water":"신장·방광·뼈·귀","수 水":"신장·방광·뼈·귀"};
-  const bodyPart=domBodyPart[dom.name]||"전신 기운";
-
-  /* ── 개인화된 운세 텍스트 ── */
-  const overallTpl=`${nm}님은 ${tiTxt}(${sj.y}년 ${sj.m}월 ${sj.d}일생)으로, 사주의 일주(日柱)는 '${ilJu}'입니다. ${gTxt}의 기운을 지닌 ${ilJu}는 ${dom.emoji}${dom.name}이 주도하는 명식(命式)으로, ${f.mbti||'INFP'}의 타고난 ${trait}과 결합해 2026년 강력한 시너지를 냅니다. 사주 내 ${weakName} 기운이 상대적으로 얕으니 ${lucky.item} 소지와 ${lucky.color} 스타일링으로 균형을 맞추는 것이 올해의 핵심 개운법입니다. ${sj.m}~${m2(3)}월은 내실을 다지는 시기, ${m2(4)}~${m2(7)}월은 확장과 결실의 기운이 강해집니다. 일주 ${ilJu}가 품은 ${dom.name}의 정기(精氣)가 모든 선택의 든든한 배경이 되어줄 2026년, 자신의 가치관을 세상에 선명하게 드러내는 용기가 가장 큰 행운의 열쇠입니다.`;
-
-  const wealthTpl=`${ilJu} 일주의 재성(財星)을 살피면, ${dom.name.includes("토")||dom.name.includes("금")?"재물 기운이 두터운 배치로 올해 수입 상승 가능성이 높습니다":"재물의 흐름은 하반기에 집중되므로 상반기에 기반을 다지는 전략이 최선입니다"}. 재물 귀인은 ${f.gender==='male'?"나이 차이가 있는 여성 계열의 전문직 종사자":"신뢰감 있는 남성 계열의 경험자"} 타입이 많으며, ${m2(2)}~${m2(4)}월에 핵심 재물 기회가 집중됩니다. ${weakName} 기운의 약세가 재물 흐름의 걸림돌이 될 수 있으니 ${lucky.item}으로 보완하고, 행운 숫자 ${lucky.number}을 금융 결정 날짜나 계좌 비밀번호 끝자리에 활용해보세요. 단기 투기보다 ${lucky.color} 계열 지갑에 꾸준히 모으는 적립 방식이 ${ilJu} 일주의 기운과 잘 맞습니다.`;
-
-  const loveTpl=`${ilJu} 일주는 ${dom.name.includes("수")||dom.name.includes("목")?"감성이 깊고 진정성을 중시하는 기운으로, 겉모습보다 내면의 교감에 끌리는 타입입니다":"열정적이고 솔직한 감정 표현이 좋은 결과를 만드는 기운으로, 먼저 다가가는 행동력이 큰 강점입니다"}. ${tiTxt}에게 올해 잘 맞는 인연은 ${f.gender==='male'?"음(陰)적 기운이 강한—차분하고 내면이 풍부한":"양(陽)적 기운이 강한—활동적이고 추진력 있는"} 타입입니다. 인연의 피크는 ${m2(1)}월과 ${m2(5)}월이며, 지적 관심사를 공유하는 모임·온라인 커뮤니티·세미나에서 만남이 성사될 가능성이 큽니다. 비즈니스 파트너십에서는 ${trait}이 신뢰 구축의 핵심 자산이 되므로, 처음 만나는 자리에서 자신의 가치관을 명확히 전달하는 것이 중요합니다.`;
-
-  const careerTpl=`${ilJu} 일주의 관성(官星)과 식상(食傷)을 살피면, ${dom.name.includes("화")||dom.name.includes("목")?"창의적·도전적 업무에서 탁월한 성과를 내는 해입니다. 신규 사업·크리에이티브·기획 분야에서의 도약이 기대됩니다":"안정적이고 체계적인 환경에서 전문성을 축적하는 해입니다. 기존 조직 내 신뢰 구축과 역량 심화가 핵심입니다"}. ${f.mbti||'INFP'}의 ${trait}이 이 해에 특히 강점으로 작용하며, 커리어 결정의 적기는 ${m2(3)}~${m2(5)}월입니다. 나와 다른 성향—${weakName}의 기운을 가진 멘토를 가까이 두면 사각지대를 메우며 성장 속도가 배가됩니다.`;
-
-  const healthTpl=`${tiTxt}(${sj.y}년생)의 건강은 ${dom.name}이 주도하는 명식 특성상 ${bodyPart} 부위에 각별한 주의가 필요합니다. 특히 ${sj.m}~${m2(3)}월 피로 누적에 주의하고, ${m2(4)}월 이후 체력이 회복되는 전환점이 찾아옵니다. 행운 음식 ${lucky.food}을 주 3회 이상 섭취하면 약한 ${weakName} 기운을 보완해 체내 오행의 균형이 맞춰집니다. ${lucky.gem}을 몸에 지니면 ${dom.name}의 치유 기운이 활성화되고, 취침 전 30분 디지털 디톡스 + 감사 저널링 3가지가 숙면과 운세 상승을 동시에 이끌어냅니다.`;
-
-  const mentorTpl=`${ilJu} 일주에게 찾아오는 귀인은 ${dom.name.includes("수")||dom.name.includes("금")?"조용하고 깊이 있는 분야의 전문가":"활동적이고 넓은 인맥을 가진 연결자"} 타입이 많습니다. ${f.gender==='male'?"여성 계열의 연상":"남성 계열의 경험자"} 또는 해외 경험이 풍부한 분이 핵심 귀인이 될 가능성이 높으며, 특히 ${m2(2)}월과 ${m2(6)}월에 예상치 못한 조력자가 등장합니다. ${lucky.place}에서 우연히 이루어지는 만남을 소홀히 여기지 마세요. ${weakName} 기운이 부족한 ${ilJu} 일주는 그 기운을 보완해줄 사람이 진정한 귀인이 되며, 내가 먼저 누군가의 귀인이 되어주는 선행이 인복을 키우는 가장 빠른 길입니다.`;
-
-  const studyTpl=`${ilJu} 일주의 학업·시험운을 보면, ${dom.name.includes("금")||dom.name.includes("수")?"집중력과 분석력이 강화되는 해로 자격증·고시·전문직 시험에 특히 유리한 기운입니다":"창의적 사고와 표현력이 강화되는 해로 논술·면접·발표 중심 시험에서 두각을 나타낼 수 있습니다"}. ${f.mbti||'INFP'}의 ${trait}이 학업에서도 강점이 되며, 집중력 골든타임은 오전 6~9시·오후 9~11시입니다. 합격 기운의 피크는 ${m2(1)}월과 ${m2(5)}월이고, 행운의 공부 장소 ${lucky.place}를 학습 공간으로 삼으면 집중력이 배가됩니다. 행운 숫자 ${lucky.number}을 시험 접수·날짜 선택에 활용하면 긍정 에너지를 극대화할 수 있습니다.`;
-
-  const habitTpl=`${tiTxt}(${sj.y}년생)에게 가장 잘 맞는 행운의 장소는 ${lucky.place}이며, 중요한 결정 전날 이곳을 방문하면 ${dom.name}의 기운이 상승합니다. 아침 루틴: 기상 후 15분 이내 미지근한 물 한 잔 + 자연광 받기. 행운 음식 ${lucky.food}을 주 3회 이상 섭취하면 약한 ${weakName} 기운을 보완해 전반적인 운세 흐름이 부드러워집니다. ${lucky.gem}을 몸에 지니거나 책상 위에 두면 집중력과 판단력이 향상됩니다. 취침 전 디지털 기기 30분 차단 + 감사 세 가지 저널링이 숙면과 다음 날 운세를 높이는 핵심 개운법입니다.`;
-
-  return{oheng,wealth,love,career,health,mentor,study,week,lotto,dom,lucky,trait,sj,tiTxt,ilJu,weakName,
-    overall:overallTpl,wealthDeep:wealthTpl,loveDeep:loveTpl,habitDeep:habitTpl,
-    careerDeep:careerTpl,healthDeep:healthTpl,mentorDeep:mentorTpl,studyDeep:studyTpl};
+  return{oheng,dom,weak,lucky,sc,week,lotto,sj,weakName:weak.name.replace(/ .+/,"")};
 }
 
-/* ── STAR FIELD (별똥별 없음 — 초창기 스타일 그대로) ── */
+/* ── Gemini 지수 백오프 ── */
+async function fetchWithBackoff(body,maxRetries=3){
+  let lastErr;
+  for(let i=0;i<maxRetries;i++){
+    try{
+      const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(res.status===429){
+        const w=Math.pow(2,i)*1500+Math.random()*500;
+        console.warn('[429] '+(i+1)+'/'+maxRetries+' → '+Math.round(w/1000)+'초 대기');
+        await new Promise(r=>setTimeout(r,w));
+        lastErr=new Error('HTTP_429');continue;
+      }
+      return res;
+    }catch(e){
+      lastErr=e;
+      if(i<maxRetries-1)await new Promise(r=>setTimeout(r,Math.pow(2,i)*1000));
+    }
+  }
+  throw lastErr||new Error('NETWORK_ERROR');
+}
+
+/* ── Gemini API 호출 ── */
+async function callGemini(f,local){
+  const sj=local.sj||{};
+  const domName=(local.dom&&local.dom.name)||'';
+  const weakName=local.weakName||'';
+  const lines=[
+    '당신은 사주명리학 40년 경력의 대가이자 심리상담 전문가입니다.',
+    '대전 지역의 문화적 정서를 이해하며, 따뜻하고 구체적인 언어로 상담합니다.',
+    '아래 정보를 바탕으로 격국(格局), 용신(用神), 신강/신약을 분석하고,',
+    '반드시 순수 JSON 형식으로만 응답하십시오. 마크다운 코드블록은 절대 사용 금지.',
+    '',
+    '[사용자 정보]',
+    '이름: '+(f.name||'익명')+(f.chineseName?' ('+f.chineseName+')':''),
+    '성별: '+(f.gender==='male'?'남성':'여성'),
+    '생년월일: '+(f.birthdate||'')+' ('+sj.tiTxt+')',
+    '출생시간: '+(f.birthHour||'모름'),
+    '출생지: '+(f.city||'미입력'),
+    'MBTI: '+(f.mbti||''),
+    '핵심 고민: '+(CONCERN_KR[f.concern]||f.concern||''),
+    '',
+    '[사전 계산된 사주]',
+    '연주: '+(sj.ySaju||'미상'),
+    '월지: '+(sj.mJi||'미상'),
+    '일주: '+(sj.dGan||'')+(sj.dJi||'')+'일주',
+    '시지: '+(sj.hJi||'미상'),
+    '주도 오행: '+domName,
+    '용신 후보(약한 오행): '+weakName,
+    '',
+    '[분석 필수 항목]',
+    '1. 격국(格局): 일주×월지 정격/변격 판단',
+    '2. 신강/신약: 일간 세력 판단 후 억부용신 적용',
+    '3. 용신(用神)/기신(忌神): 보완 오행과 피해야 할 오행',
+    '4. MBTI '+(f.mbti||'')+' × 사주 교차 분석',
+    '5. 고민 "'+( CONCERN_KR[f.concern]||'')+'" 에 대한 깊이 있는 전문 조언 (가장 상세히)',
+    '6. 시기는 반드시 "X월~Y월" 형식으로 구체적 명시',
+    '',
+    '[출력 규칙]',
+    '- 순수 JSON만 출력 (코드블록 금지)',
+    '- 각 텍스트 필드 값은 마크다운 형식 사용 가능 (**굵게**, *기울기*, - 목록 등)',
+    '- overall 400자 이상, 각 항목 250자 이상의 전문적 내용',
+    '- 뻔한 일반론 금지, 일주·월지 상호작용 반드시 언급',
+    '- 따뜻하고 공감되는 언어 사용 (대전 특색 반영 가능)',
+    '- lotto: 1~45 중복 없는 정수 6개씩 5세트, 사주 오행 기반 생성',
+    '',
+    '[응답 JSON 구조]',
+    '{"overall":"...","wealthDeep":"...","loveDeep":"...","careerDeep":"...","healthDeep":"...","habitDeep":"...","mentorDeep":"...","studyDeep":"...","lotto":[[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n]]}',
+  ];
+
+  const body={
+    contents:[{parts:[{text:lines.join('\n')}]}],
+    generationConfig:{temperature:0.85,topP:0.95,maxOutputTokens:4096},
+  };
+
+  const res=await fetchWithBackoff(body,3);
+  if(!res.ok){
+    const status=res.status;
+    const msg=await res.text().catch(()=>'');
+    console.error('[Gemini HTTP '+status+']',msg.slice(0,300));
+    throw new Error('HTTP_'+status);
+  }
+  const data=await res.json();
+  const raw=(data?.candidates?.[0]?.content?.parts?.[0]?.text)||'';
+  if(!raw){console.error('[빈 응답]',JSON.stringify(data).slice(0,400));throw new Error('EMPTY_RESPONSE');}
+  console.log('[Gemini 원본]',raw.slice(0,200));
+
+  /* JSON 추출 파이프라인 */
+  let c=raw.replace(/```json/gi,'').replace(/```/g,'').trim();
+  const s=c.indexOf('{'),e=c.lastIndexOf('}');
+  if(s<0||e<=s){console.error('[JSON 없음]',c.slice(0,200));throw new Error('JSON_NOT_FOUND');}
+  c=c.slice(s,e+1);
+  /* 문자열 값 내부 실제 개행 → \\n */
+  c=c.replace(/"((?:[^"\\]|\\.)*)"/g,(m,v)=>'"'+v.replace(/\r?\n/g,'\\n')+'"');
+  /* 제어문자 제거 */
+  c=c.replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g,'');
+  let parsed;
+  try{parsed=JSON.parse(c);}
+  catch(pe){console.error('[파싱 실패]',pe.message,c.slice(0,300));throw new Error('PARSE_ERROR');}
+  console.log('[Gemini 성공]',Object.keys(parsed).join(', '));
+  return parsed;
+}
+
+/* ── 마크다운 렌더러 ── */
+function Md({text}){
+  if(!text)return null;
+  let html='';
+  try{html=marked.parse(String(text),{breaks:true,gfm:true});}
+  catch(e){html=String(text).replace(/\n/g,'<br/>');}
+  return <div className="md-content" dangerouslySetInnerHTML={{__html:html}}/>;
+}
+
+/* ── 별 배경 ── */
 function StarField(){
-  const stars=useRef(Array.from({length:70},(_,i)=>({id:i,x:Math.random()*100,y:Math.random()*100,sz:Math.random()*2+.5,delay:Math.random()*4,op:Math.random()*.7+.1,dur:Math.random()*3+2}))).current;
+  const stars=useRef(Array.from({length:70},(_,i)=>({id:i,x:Math.random()*100,y:Math.random()*100,sz:Math.random()*2+.4,delay:Math.random()*5,op:Math.random()*.7+.1,dur:Math.random()*3+2}))).current;
   return(
     <div style={{position:'fixed',inset:0,pointerEvents:'none',overflow:'hidden',zIndex:0}}>
       {stars.map(s=><div key={s.id} style={{position:'absolute',left:`${s.x}%`,top:`${s.y}%`,width:s.sz,height:s.sz,background:'white',borderRadius:'50%',opacity:s.op,animation:`twinkle ${s.dur}s ease-in-out infinite ${s.delay}s`}}/>)}
@@ -284,46 +345,49 @@ function StarField(){
   );
 }
 
-/* ── CIRCULAR GAUGE ── */
+/* ── 원형 게이지 ── */
 function CG({value,label,icon,color,delay=0}){
   const [anim,setAnim]=useState(0);
-  const r=36,cx=42,cy=42,circ=2*Math.PI*r,dash=(anim/100)*circ;
-  useEffect(()=>{const t=setTimeout(()=>{let st=null;const step=(ts)=>{if(!st)st=ts;const p=Math.min((ts-st)/1200,1);setAnim(Math.floor(p*value));if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);},delay);return()=>clearTimeout(t);},[value,delay]);
+  const r=36,cx=42,cy=42,circ=2*Math.PI*r;
+  useEffect(()=>{
+    const t=setTimeout(()=>{let st=null;const step=ts=>{if(!st)st=ts;const p=Math.min((ts-st)/1200,1);setAnim(Math.floor(p*value));if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);},delay);
+    return()=>clearTimeout(t);
+  },[value,delay]);
   return(
-    <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'6px'}}>
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:6}}>
       <div style={{position:'relative'}}>
         <svg width="84" height="84" style={{transform:'rotate(-90deg)'}}>
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="6"/>
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="6" strokeDasharray={`${dash} ${circ}`} strokeLinecap="round" style={{filter:`drop-shadow(0 0 7px ${color})`}}/>
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke="rgba(255,255,255,.06)" strokeWidth="6"/>
+          <circle cx={cx} cy={cy} r={r} fill="none" stroke={color} strokeWidth="6" strokeDasharray={`${(anim/100)*circ} ${circ}`} strokeLinecap="round" style={{filter:`drop-shadow(0 0 7px ${color})`}}/>
         </svg>
         <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
-          <span style={{fontSize:'0.95rem'}}>{icon}</span>
-          <span style={{color:'#e2d9f3',fontSize:'0.9rem',fontWeight:700}}>{anim}<span style={{fontSize:'0.5rem'}}>%</span></span>
+          <span style={{fontSize:'1rem'}}>{icon}</span>
+          <span style={{color:'#e2d9f3',fontSize:'.9rem',fontWeight:700}}>{anim}<span style={{fontSize:'.5rem'}}>%</span></span>
         </div>
       </div>
-      <span style={{color:'rgba(167,139,250,0.8)',fontSize:'0.65rem',letterSpacing:'0.06em'}}>{label}</span>
+      <span style={{color:'rgba(167,139,250,.8)',fontSize:'.65rem',letterSpacing:'.06em'}}>{label}</span>
     </div>
   );
 }
 
-/* ── OHENG BAR ── */
+/* ── 오행 바 ── */
 function OBar({item,delay}){
   const [w,setW]=useState(0);
   useEffect(()=>{const t=setTimeout(()=>setW(item.pct),delay);return()=>clearTimeout(t);},[item.pct,delay]);
   return(
-    <div style={{marginBottom:'10px'}}>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'5px'}}>
-        <span style={{color:item.color,fontSize:'0.76rem',fontWeight:600,textShadow:`0 0 8px ${item.shadow}`}}>{item.emoji} {item.name}</span>
-        <span style={{color:'rgba(226,217,243,0.5)',fontSize:'0.68rem'}}>{item.pct}%</span>
+    <div style={{marginBottom:10}}>
+      <div style={{display:'flex',justifyContent:'space-between',marginBottom:5}}>
+        <span style={{color:item.color,fontSize:'.76rem',fontWeight:600,textShadow:`0 0 8px ${item.shadow}`}}>{item.emoji} {item.name}</span>
+        <span style={{color:'rgba(226,217,243,.5)',fontSize:'.68rem'}}>{item.pct}%</span>
       </div>
-      <div style={{height:'6px',background:'rgba(255,255,255,0.05)',borderRadius:'99px',overflow:'hidden'}}>
-        <div style={{height:'100%',borderRadius:'99px',width:`${w}%`,background:`linear-gradient(90deg,${item.color}55,${item.color})`,boxShadow:`0 0 8px ${item.shadow}`,transition:`width 1.2s cubic-bezier(.4,0,.2,1) ${delay}ms`}}/>
+      <div style={{height:6,background:'rgba(255,255,255,.05)',borderRadius:99,overflow:'hidden'}}>
+        <div style={{height:'100%',borderRadius:99,width:`${w}%`,background:`linear-gradient(90deg,${item.color}55,${item.color})`,boxShadow:`0 0 8px ${item.shadow}`,transition:`width 1.2s cubic-bezier(.4,0,.2,1) ${delay}ms`}}/>
       </div>
     </div>
   );
 }
 
-/* ── WEEK CHART ── */
+/* ── 주간 차트 ── */
 function WeekChart({data}){
   const max=Math.max(...data.map(d=>d.val));
   const [shown,setShown]=useState(false);
@@ -336,15 +400,15 @@ function WeekChart({data}){
     <div>
       <svg width="100%" viewBox={`0 0 ${W} ${H}`} style={{overflow:'visible'}}>
         <defs><linearGradient id="wg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stopColor="#a78bfa"/><stop offset="50%" stopColor="#60a5fa"/><stop offset="100%" stopColor="#f472b6"/></linearGradient></defs>
-        <path d={pathD} fill="none" stroke="url(#wg)" strokeWidth="2.2" style={{strokeDasharray:shown?'1000':'0',strokeDashoffset:shown?'0':'1000',transition:'stroke-dashoffset 1.8s ease',filter:'drop-shadow(0 0 4px rgba(167,139,250,0.5))'}}/>
+        <path d={pathD} fill="none" stroke="url(#wg)" strokeWidth="2.2" style={{strokeDasharray:shown?'1000':'0',strokeDashoffset:shown?'0':'1000',transition:'stroke-dashoffset 1.8s ease',filter:'drop-shadow(0 0 4px rgba(167,139,250,.5))'}}/>
         {pts.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r="4" fill={lc[p.lbl]||'#a78bfa'} style={{filter:`drop-shadow(0 0 4px ${lc[p.lbl]})`,opacity:shown?1:0,transition:`opacity .4s ${.9+i*.1}s`}}/>)}
       </svg>
-      <div style={{display:'flex',justifyContent:'space-between',marginTop:'6px'}}>
+      <div style={{display:'flex',justifyContent:'space-between',marginTop:6}}>
         {data.map((d,i)=>(
-          <div key={i} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:'2px'}}>
-            <span style={{fontSize:'0.7rem'}}>{d.emoji}</span>
-            <span style={{color:'rgba(167,139,250,0.5)',fontSize:'0.58rem'}}>{d.day}</span>
-            <span style={{fontSize:'0.55rem',color:lc[d.lbl],fontWeight:700}}>{d.lbl}</span>
+          <div key={i} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:2}}>
+            <span style={{fontSize:'.7rem'}}>{d.emoji}</span>
+            <span style={{color:'rgba(167,139,250,.5)',fontSize:'.58rem'}}>{d.day}</span>
+            <span style={{fontSize:'.55rem',color:lc[d.lbl]||'#a78bfa',fontWeight:700}}>{d.lbl}</span>
           </div>
         ))}
       </div>
@@ -352,17 +416,17 @@ function WeekChart({data}){
   );
 }
 
-/* ── LOTTO BALLS ── */
+/* ── 로또 볼 ── */
 function LottoBalls({sets}){
-  const colors=['#fbbf24','#f97316','#ec4899','#8b5cf6','#06b6d4'];
+  const cols=['#fbbf24','#f97316','#ec4899','#8b5cf6','#06b6d4'];
   return(
-    <div style={{display:'flex',flexDirection:'column',gap:'12px'}}>
+    <div style={{display:'flex',flexDirection:'column',gap:12}}>
       {sets.map((set,si)=>(
-        <div key={si} style={{display:'flex',alignItems:'center',gap:'8px'}}>
-          <span style={{color:colors[si],fontSize:'0.65rem',fontWeight:700,minWidth:'20px',letterSpacing:'0.05em'}}>{si+1}세트</span>
-          <div style={{display:'flex',gap:'6px',flexWrap:'wrap'}}>
+        <div key={si} style={{display:'flex',alignItems:'center',gap:8}}>
+          <span style={{color:cols[si],fontSize:'.65rem',fontWeight:700,minWidth:20}}>{si+1}세트</span>
+          <div style={{display:'flex',gap:6,flexWrap:'wrap'}}>
             {set.map((n,ni)=>(
-              <div key={ni} className="lotto-ball" style={{width:'36px',height:'36px',borderRadius:'50%',background:`radial-gradient(circle at 35% 35%, ${colors[si]}ff, ${colors[si]}66)`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.75rem',fontWeight:800,color:'#fff',border:`2px solid ${colors[si]}`,animationDelay:`${si*.3+ni*.1}s`,flexShrink:0}}>
+              <div key={ni} className="lotto-ball" style={{width:36,height:36,borderRadius:'50%',background:`radial-gradient(circle at 35% 35%,${cols[si]},${cols[si]}66)`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'.75rem',fontWeight:800,color:'#fff',border:`2px solid ${cols[si]}`,animationDelay:`${si*.3+ni*.1}s`,flexShrink:0}}>
                 {n}
               </div>
             ))}
@@ -373,396 +437,264 @@ function LottoBalls({sets}){
   );
 }
 
-/* ── ACCORDION ── */
+/* ── 아코디언 ── */
 function Accordion({icon,title,children,open:defaultOpen=false,accent='#a78bfa'}){
   const [open,setOpen]=useState(defaultOpen);
   return(
-    <div style={{borderRadius:'14px',border:`1px solid ${open?accent+'44':'rgba(255,255,255,0.07)'}`,background:open?`${accent}0a`:'rgba(255,255,255,0.02)',marginBottom:'10px',transition:'all .3s ease',overflow:'hidden'}}>
+    <div style={{borderRadius:14,border:`1px solid ${open?accent+'44':'rgba(255,255,255,.07)'}`,background:open?`${accent}0a`:'rgba(255,255,255,.02)',marginBottom:10,overflow:'hidden',transition:'all .3s'}}>
       <button onClick={()=>setOpen(o=>!o)} style={{width:'100%',display:'flex',alignItems:'center',justifyContent:'space-between',padding:'14px 16px',background:'none',border:'none',cursor:'pointer',outline:'none'}}>
-        <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
           <span style={{fontSize:'1rem'}}>{icon}</span>
-          <span style={{color:open?accent:'rgba(226,217,243,0.75)',fontSize:'0.82rem',fontWeight:600,letterSpacing:'0.05em'}}>{title}</span>
+          <span style={{color:open?accent:'rgba(226,217,243,.75)',fontSize:'.82rem',fontWeight:600,letterSpacing:'.05em'}}>{title}</span>
         </div>
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{color:accent,transform:open?'rotate(0)':'rotate(-90deg)',transition:'transform .3s'}}>
-          <path d={open?"M3 6l5 5 5-5":"M6 3l5 5-5 5"} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M3 6l5 5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </button>
-      <div className={`accordion-body ${open?'open':''}`}>
-        <div style={{padding:'0 16px 16px',color:'rgba(209,213,219,0.85)',fontSize:'0.8rem',lineHeight:'1.95',borderTop:`1px solid ${accent}22`}}>
-          <div style={{paddingTop:'12px'}}>{children}</div>
+      <div className={`acc-body ${open?'open':''}`}>
+        <div style={{padding:'0 16px 16px',borderTop:`1px solid ${accent}22`}}>
+          <div style={{paddingTop:12}}>{children}</div>
         </div>
       </div>
     </div>
   );
 }
 
-/* ── NH (Neon Highlight) ── */
-function NH({c='#a78bfa',children}){return<span style={{color:c,fontWeight:700,textShadow:`0 0 10px ${c}88`,borderBottom:`1px solid ${c}55`,paddingBottom:'1px'}}>{children}</span>;}
-
-/* ── LOTTO COPY MODAL ── */
-function LottoCopyModal({lotto,onClose}){
-  const [copied,setCopied]=useState(false);
-  const cols=['#fbbf24','#f97316','#ec4899','#8b5cf6','#06b6d4'];
-  const txt=lotto.map((set,i)=>`세트${i+1}: ${set.join(' - ')}`).join('\n')+'\n\n📱 나도 분석받기 → '+window.location.href;
-  const doCopy=()=>{
-    const copy=(t)=>{if(navigator.clipboard?.writeText){navigator.clipboard.writeText(t);}else{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}};
-    copy(txt);setCopied(true);setTimeout(()=>setCopied(false),2500);
-  };
-  const doShare=async()=>{if(navigator.share){try{await navigator.share({title:'추천 로또 번호',text:txt});}catch(e){}}else{doCopy();}};
-  return(
-    <div style={{position:'fixed',inset:0,zIndex:110,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px',background:'rgba(5,5,20,0.93)',backdropFilter:'blur(8px)'}} onClick={onClose}>
-      <div style={{maxWidth:'360px',width:'100%',borderRadius:'24px',padding:'24px',background:'linear-gradient(135deg,rgba(40,20,60,0.96),rgba(15,20,50,0.96))',border:'1px solid rgba(251,191,36,0.3)',boxShadow:'0 0 60px rgba(251,191,36,0.15)'}} onClick={e=>e.stopPropagation()}>
-        <div style={{textAlign:'center',marginBottom:'16px'}}>
-          <div style={{fontSize:'2rem',marginBottom:'6px'}}>🎰</div>
-          <h3 style={{color:'#e2d9f3',fontFamily:"'Noto Serif KR',serif",fontSize:'1rem',marginBottom:'4px'}}>추천 로또 번호</h3>
-          <p style={{color:'rgba(251,191,36,0.6)',fontSize:'0.7rem'}}>번호를 복사하거나 공유해보세요</p>
-        </div>
-        <div style={{padding:'14px',borderRadius:'12px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(251,191,36,0.15)',marginBottom:'14px'}}>
-          {lotto.map((set,si)=>(
-            <div key={si} style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:si<4?'8px':'0'}}>
-              <span style={{color:cols[si],fontSize:'0.65rem',fontWeight:700,minWidth:'36px'}}>세트{si+1}</span>
-              <span style={{color:'#e2d9f3',fontSize:'0.82rem',letterSpacing:'0.08em'}}>{set.join(' - ')}</span>
-            </div>
-          ))}
-        </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',marginBottom:'8px'}}>
-          <button onClick={doShare} style={{padding:'11px',borderRadius:'12px',background:'linear-gradient(135deg,#b45309,#d97706)',color:'#fff',border:'none',fontSize:'0.78rem',fontWeight:600,cursor:'pointer'}}>🔗 SNS 공유</button>
-          <button onClick={doCopy} style={{padding:'11px',borderRadius:'12px',background:copied?'rgba(74,222,128,0.2)':'rgba(251,191,36,0.1)',color:copied?'#4ade80':'#fbbf24',border:`1px solid ${copied?'rgba(74,222,128,0.4)':'rgba(251,191,36,0.3)'}`,fontSize:'0.78rem',fontWeight:600,cursor:'pointer'}}>
-            {copied?'✅ 복사 완료':'📋 번호 복사'}
-          </button>
-        </div>
-        <button onClick={onClose} style={{width:'100%',padding:'10px',borderRadius:'10px',background:'transparent',border:'1px solid rgba(255,255,255,0.07)',color:'rgba(167,139,250,0.4)',fontSize:'0.76rem',cursor:'pointer'}}>닫기</button>
-      </div>
-    </div>
-  );
-}
-
-/* ── SHARE MODAL ── */
+/* ── 공유 모달 ── */
 function ShareModal({report,form,onClose}){
   const [copied,setCopied]=useState(false);
-  /* window.location.href 로 현재 접속 URL 자동 사용 */
   const url=window.location.href;
-  const txt=`🔮 나의 MBTI × 사주 분석 결과!\n\n👤 ${form.name||'고객님'}님 · ${form.mbti||''} · ${report.dom.emoji}${report.dom.name} 우세\n\n📝 【 종합 사주 총평 】\n${report.overall}\n\n✨ 행운 아이템: ${report.lucky.item}\n🎨 행운 컬러: ${report.lucky.color}\n📍 행운 장소: ${report.lucky.place}\n\n📱 나도 분석받기 → ${url}`;
-  const copy=(t)=>{if(navigator.clipboard?.writeText){navigator.clipboard.writeText(t);}else{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}};
-  const doShare=async()=>{if(navigator.share){try{await navigator.share({title:'My Saju Master',text:txt,url});}catch(e){}}else{copy(txt);setCopied(true);setTimeout(()=>setCopied(false),2500);}};
+  const txt='🔮 나의 MBTI × 사주 분석 결과!\n\n'
+    +'👤 '+form.name+'님 · '+form.mbti+'\n\n'
+    +'📝 종합 총평\n'+(report.overall||'').replace(/[*#_>]/g,'').slice(0,200)+'...\n\n'
+    +'📱 나도 분석받기 → '+url;
+  const copy=t=>{if(navigator.clipboard)navigator.clipboard.writeText(t);else{const ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);}};
+  const doShare=async()=>{if(navigator.share){try{await navigator.share({title:'아우름사주',text:txt,url});}catch(e){}}else{copy(txt);setCopied(true);setTimeout(()=>setCopied(false),2500);}};
   const doCopy=()=>{copy(txt);setCopied(true);setTimeout(()=>setCopied(false),2500);};
   return(
-    <div style={{position:'fixed',inset:0,zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px',background:'rgba(5,5,20,0.93)',backdropFilter:'blur(8px)'}} onClick={onClose}>
-      <div style={{maxWidth:'360px',width:'100%',borderRadius:'24px',padding:'24px',background:'linear-gradient(135deg,rgba(40,20,80,0.92),rgba(15,25,70,0.92))',border:'1px solid rgba(167,139,250,0.3)',boxShadow:'0 0 60px rgba(139,92,246,0.3)',maxHeight:'88vh',overflowY:'auto'}} onClick={e=>e.stopPropagation()}>
-        <div style={{textAlign:'center',marginBottom:'14px'}}>
-          <div style={{fontSize:'2rem',marginBottom:'6px'}}>✨</div>
-          <h3 style={{color:'#e2d9f3',fontFamily:"'Noto Serif KR',serif",fontSize:'1rem',marginBottom:'4px'}}>운세 결과 공유하기</h3>
-          <p style={{color:'rgba(167,139,250,0.6)',fontSize:'0.7rem'}}>친구에게 나의 운세를 알려보세요</p>
+    <div onClick={onClose} style={{position:'fixed',inset:0,zIndex:200,display:'flex',alignItems:'center',justifyContent:'center',padding:16,background:'rgba(5,5,20,.93)',backdropFilter:'blur(8px)'}}>
+      <div onClick={e=>e.stopPropagation()} style={{maxWidth:360,width:'100%',borderRadius:24,padding:24,background:'linear-gradient(135deg,rgba(40,20,80,.95),rgba(15,25,70,.95))',border:'1px solid rgba(167,139,250,.3)',boxShadow:'0 0 60px rgba(139,92,246,.3)',maxHeight:'85vh',overflowY:'auto'}}>
+        <div style={{textAlign:'center',marginBottom:14}}><div style={{fontSize:'2rem',marginBottom:6}}>✨</div>
+          <h3 style={{color:'#e2d9f3',fontFamily:"'Noto Serif KR',serif",fontSize:'1rem',marginBottom:4}}>운세 결과 공유하기</h3>
+          <p style={{color:'rgba(167,139,250,.6)',fontSize:'.7rem'}}>친구에게 나의 운세를 알려보세요</p>
         </div>
-        <div style={{padding:'12px',borderRadius:'12px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.08)',marginBottom:'14px',maxHeight:'220px',overflowY:'auto'}}>
-          <p style={{color:'rgba(209,213,219,0.8)',fontSize:'0.74rem',lineHeight:'1.85',whiteSpace:'pre-line'}}>{txt}</p>
+        <div style={{padding:12,borderRadius:12,background:'rgba(255,255,255,.04)',border:'1px solid rgba(255,255,255,.08)',marginBottom:14,maxHeight:200,overflowY:'auto'}}>
+          <p style={{color:'rgba(209,213,219,.8)',fontSize:'.74rem',lineHeight:'1.85',whiteSpace:'pre-line'}}>{txt}</p>
         </div>
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',marginBottom:'12px'}}>
-          <button onClick={doShare} style={{padding:'11px',borderRadius:'12px',background:'linear-gradient(135deg,#7c3aed,#2563eb)',color:'#fff',border:'1px solid rgba(255,255,255,0.15)',fontSize:'0.78rem',fontWeight:600,cursor:'pointer'}}>🔗 SNS 공유</button>
-          <button onClick={doCopy} style={{padding:'11px',borderRadius:'12px',background:copied?'rgba(74,222,128,0.2)':'rgba(255,255,255,0.06)',color:copied?'#4ade80':'rgba(167,139,250,0.8)',border:`1px solid ${copied?'rgba(74,222,128,0.4)':'rgba(255,255,255,0.1)'}`,fontSize:'0.78rem',fontWeight:600,cursor:'pointer'}}>
-            {copied?'✅ 복사 완료':'📋 텍스트 복사'}
-          </button>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:12}}>
+          <button onClick={doShare} style={{padding:11,borderRadius:12,background:'linear-gradient(135deg,#7c3aed,#2563eb)',color:'#fff',border:'none',fontSize:'.78rem',fontWeight:600,cursor:'pointer'}}>🔗 SNS 공유</button>
+          <button onClick={doCopy} style={{padding:11,borderRadius:12,background:copied?'rgba(74,222,128,.2)':'rgba(255,255,255,.06)',color:copied?'#4ade80':'rgba(167,139,250,.8)',border:`1px solid ${copied?'rgba(74,222,128,.4)':'rgba(255,255,255,.1)'}`,fontSize:'.78rem',fontWeight:600,cursor:'pointer'}}>{copied?'✅ 복사 완료':'📋 텍스트 복사'}</button>
         </div>
-        <button onClick={onClose} style={{width:'100%',padding:'10px',borderRadius:'10px',background:'transparent',border:'1px solid rgba(255,255,255,0.07)',color:'rgba(167,139,250,0.4)',fontSize:'0.76rem',cursor:'pointer'}}>닫기</button>
+        <button onClick={onClose} style={{width:'100%',padding:10,borderRadius:10,background:'transparent',border:'1px solid rgba(255,255,255,.07)',color:'rgba(167,139,250,.4)',fontSize:'.76rem',cursor:'pointer'}}>닫기</button>
       </div>
     </div>
   );
 }
 
-/* ── ANALYZING OVERLAY — Gemini AI 대기 버전 ── */
+/* ── 로딩 오버레이 ── */
 function Analyzing(){
   const [phase,setPhase]=useState(0);
-  const phases=[
-    "생년월일 & 사주 데이터 수집 중...",
-    "오행(五行) 기운 분석 중...",
-    "일주(日柱)와 월지(月支) 해석 중...",
-    "MBTI × 명리학 시너지 분석 중...",
-    "운명의 실타래를 해석 중...",
-    "AI 명리학 대가에게 전달 중...",
-    "맞춤형 사주 리포트 완성 중...",
-  ];
+  const phases=['생년월일 & 사주 기초 계산 중...','오행(五行) 기운 분석 중...','일주(日柱) · 월지(月支) 해석 중...','MBTI × 사주 시너지 매핑 중...','운명의 실타래를 해석 중...','AI 명리학 대가에게 전달 중...','맞춤형 사주 리포트 완성 중...'];
   useEffect(()=>{
-    const gaps=[900,900,900,900,1000,1500,99999];
-    let ph=0,timer;
-    const tick=()=>{if(ph<phases.length-1){ph++;setPhase(ph);timer=setTimeout(tick,gaps[ph]);}};
-    timer=setTimeout(tick,gaps[0]);
-    return()=>clearTimeout(timer);
+    const gaps=[800,800,900,900,1000,2000,99999];
+    let ph=0,t;
+    const tick=()=>{if(ph<phases.length-1){ph++;setPhase(ph);t=setTimeout(tick,gaps[ph]);}};
+    t=setTimeout(tick,gaps[0]);return()=>clearTimeout(t);
   },[]);
   const prog=Math.min(94,Math.round((phase/(phases.length-1))*100));
   return(
-    <div style={{position:'fixed',inset:0,zIndex:90,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(5,5,20,0.97)'}}>
+    <div style={{position:'fixed',inset:0,zIndex:90,display:'flex',alignItems:'center',justifyContent:'center',background:'rgba(5,5,20,.97)'}}>
       <div style={{textAlign:'center',padding:'0 32px'}}>
-        <div style={{position:'relative',width:'144px',height:'144px',margin:'0 auto 28px'}}>
+        <div style={{position:'relative',width:144,height:144,margin:'0 auto 28px'}}>
           {[0,1,2,3].map(i=>(
             <div key={i} style={{position:'absolute',inset:0,borderRadius:'50%',border:'2px solid',borderColor:`hsla(${220+i*30},100%,65%,${.8-i*.15})`,animation:`spin ${1.5+i*.4}s linear infinite ${i%2===0?'':'reverse'}`,transform:`scale(${1-i*.18})`}}/>
           ))}
           <div style={{position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'2.5rem'}}>✨</div>
           {Array.from({length:8},(_,i)=>(
-            <div key={i} style={{position:'absolute',top:'50%',left:'50%',width:'7px',height:'7px',borderRadius:'50%',background:`hsl(${220+i*22},100%,65%)`,animation:`orbit ${2+i*.22}s linear infinite ${i*.22}s`,transformOrigin:`${-60+i*2}px 0`,boxShadow:'0 0 6px currentColor'}}/>
+            <div key={i} style={{position:'absolute',top:'50%',left:'50%',width:7,height:7,borderRadius:'50%',background:`hsl(${220+i*22},100%,65%)`,animation:`orbit ${2+i*.22}s linear infinite ${i*.22}s`,transformOrigin:`${-60+i*2}px 0`,boxShadow:'0 0 6px currentColor'}}/>
           ))}
         </div>
-        <p style={{color:'#e2d9f3',fontFamily:"'Noto Serif KR',serif",fontSize:'1.05rem',fontWeight:300,letterSpacing:'0.06em',marginBottom:'16px'}}>{phases[phase]}</p>
-        <div style={{width:'240px',height:'5px',background:'rgba(255,255,255,0.07)',borderRadius:'99px',overflow:'hidden',margin:'0 auto 10px'}}>
-          <div style={{height:'100%',borderRadius:'99px',width:`${prog}%`,background:'linear-gradient(90deg,#7c3aed,#2563eb)',boxShadow:'0 0 8px rgba(139,92,246,0.8)',transition:'width .8s ease'}}/>
+        <p style={{color:'#e2d9f3',fontFamily:"'Noto Serif KR',serif",fontSize:'1.05rem',fontWeight:300,letterSpacing:'.06em',marginBottom:16}}>{phases[phase]}</p>
+        <div style={{width:240,height:5,background:'rgba(255,255,255,.07)',borderRadius:99,overflow:'hidden',margin:'0 auto 10px'}}>
+          <div style={{height:'100%',borderRadius:99,width:`${prog}%`,background:'linear-gradient(90deg,#7c3aed,#2563eb)',boxShadow:'0 0 8px rgba(139,92,246,.8)',transition:'width .8s ease'}}/>
         </div>
-        <div style={{display:'flex',gap:'6px',justifyContent:'center'}}>
-          {phases.map((_,i)=><div key={i} style={{width:'6px',height:'6px',borderRadius:'50%',background:i<=phase?'#a78bfa':'#2a2a4a',boxShadow:i<=phase?'0 0 6px #a78bfa':'none',transition:'all .3s'}}/>)}
+        <div style={{display:'flex',gap:6,justifyContent:'center'}}>
+          {phases.map((_,i)=><div key={i} style={{width:6,height:6,borderRadius:'50%',background:i<=phase?'#a78bfa':'#2a2a4a',boxShadow:i<=phase?'0 0 6px #a78bfa':'none',transition:'all .3s'}}/>)}
         </div>
-        {phase>=5&&(
-          <p style={{color:'rgba(167,139,250,0.5)',fontSize:'0.7rem',marginTop:'14px',letterSpacing:'0.04em',animation:'riseR .6s ease both'}}>
-            ✦ AI 명리학 분석은 10~25초 소요됩니다...
-          </p>
-        )}
+        {phase>=5&&<p style={{color:'rgba(167,139,250,.5)',fontSize:'.7rem',marginTop:14,letterSpacing:'.04em',animation:'fadeIn .6s ease both'}}>✦ AI 분석은 10~25초 소요됩니다...</p>}
       </div>
     </div>
   );
 }
 
-/* ── REPORT SECTION ── */
-function ReportSection({data,form,onShare,onLotto,reportRef}){
+/* ── 리포트 섹션 ── */
+function ReportSection({data,form,onShare}){
   const [scanned,setScanned]=useState({});
   useEffect(()=>{['g1','g2','g3','g4','g5','g6'].forEach((k,i)=>setTimeout(()=>setScanned(p=>({...p,[k]:true})),i*220+80));},[]);
-
   const card=(key,children,delay=0)=>(
-    <div style={{background:'rgba(255,255,255,0.025)',border:'1px solid rgba(167,139,250,0.1)',borderRadius:'18px',padding:'20px',position:'relative',overflow:'hidden',marginBottom:'12px',animation:`riseR .7s ease ${delay}s both`}}>
+    <div style={{background:'rgba(255,255,255,.025)',border:'1px solid rgba(167,139,250,.1)',borderRadius:18,padding:20,position:'relative',overflow:'hidden',marginBottom:12,animation:`riseUp .7s ease ${delay}s both`}}>
       {!scanned[key]&&(
-        <div style={{position:'absolute',inset:0,pointerEvents:'none',overflow:'hidden',borderRadius:'18px',zIndex:5}}>
-          <div style={{position:'absolute',left:0,right:0,height:'2px',background:'linear-gradient(90deg,transparent,rgba(167,139,250,0.9),rgba(96,165,250,0.7),transparent)',boxShadow:'0 0 16px rgba(167,139,250,0.7)',animation:'scanLine 1.2s ease-in-out forwards'}}/>
+        <div style={{position:'absolute',inset:0,pointerEvents:'none',overflow:'hidden',borderRadius:18,zIndex:5}}>
+          <div style={{position:'absolute',left:0,right:0,height:2,background:'linear-gradient(90deg,transparent,rgba(167,139,250,.9),rgba(96,165,250,.7),transparent)',boxShadow:'0 0 16px rgba(167,139,250,.7)',animation:'scanLine 1.2s ease-in-out forwards'}}/>
         </div>
       )}
       {children}
     </div>
   );
-
   const hd=(icon,title,accent='#e2d9f3')=>(
-    <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'16px'}}>
+    <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:16}}>
       <span style={{fontSize:'1rem'}}>{icon}</span>
-      <h3 style={{color:accent,fontSize:'0.83rem',fontWeight:700,letterSpacing:'0.07em'}}>{title}</h3>
+      <h3 style={{color:accent,fontSize:'.83rem',fontWeight:700,letterSpacing:'.07em'}}>{title}</h3>
     </div>
   );
-
+  const GD=[
+    {k:'wealth',l:'재물운',i:'💰',c:'#fbbf24'},{k:'love',l:'애정운',i:'💕',c:'#f472b6'},
+    {k:'career',l:'커리어운',i:'🚀',c:'#60a5fa'},{k:'health',l:'건강운',i:'🌿',c:'#4ade80'},
+    {k:'mentor',l:'귀인·인복',i:'🤝',c:'#c084fc'},{k:'study',l:'학업·시험',i:'📚',c:'#f97316'},
+  ];
   return(
-    <div ref={reportRef}>
+    <div>
       {/* 헤더 */}
-      <div style={{textAlign:'center',marginBottom:'24px',animation:'riseR .8s ease both'}}>
-        <div style={{display:'inline-flex',alignItems:'center',gap:'8px',padding:'8px 18px',borderRadius:'99px',background:'linear-gradient(135deg,rgba(139,92,246,0.2),rgba(59,130,246,0.15))',border:'1px solid rgba(167,139,250,0.3)',marginBottom:'12px'}}>
-          <span style={{fontSize:'0.75rem'}}>✨</span>
-          <span style={{color:'#c4b5fd',fontSize:'0.68rem',letterSpacing:'0.18em',fontWeight:700}}>COSMIC ANALYSIS 2026</span>
-          <span style={{fontSize:'0.75rem'}}>✨</span>
+      <div style={{textAlign:'center',marginBottom:24,animation:'riseUp .8s ease both'}}>
+        <div style={{display:'inline-flex',alignItems:'center',gap:8,padding:'8px 18px',borderRadius:99,background:'linear-gradient(135deg,rgba(139,92,246,.2),rgba(59,130,246,.15))',border:'1px solid rgba(167,139,250,.3)',marginBottom:10}}>
+          <span style={{fontSize:'.75rem'}}>✨</span>
+          <span style={{color:'#c4b5fd',fontSize:'.68rem',letterSpacing:'.18em',fontWeight:700}}>AI × 사주 분석 리포트</span>
+          <span style={{fontSize:'.75rem'}}>✨</span>
         </div>
-        {/* AI 배지 */}
-        {data.aiPowered&&(
-          <div style={{display:'inline-flex',alignItems:'center',gap:'5px',padding:'4px 12px',borderRadius:'99px',background:'linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.1))',border:'1px solid rgba(16,185,129,0.3)',marginBottom:'10px',marginLeft:'8px'}}>
-            <span style={{fontSize:'0.62rem'}}>🤖</span>
-            <span style={{color:'#6ee7b7',fontSize:'0.6rem',fontWeight:700,letterSpacing:'0.1em'}}>AI POWERED</span>
-          </div>
-        )}
-        {/* API 에러 알림 */}
+        {data.aiPowered&&<div style={{marginBottom:8}}><span className="ai-badge">🤖 Gemini AI 분석</span></div>}
         {data.apiError&&(
-          <div style={{padding:'10px 14px',borderRadius:'12px',background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.25)',marginBottom:'10px',textAlign:'center'}}>
-            <p style={{color:'rgba(252,165,165,0.9)',fontSize:'0.72rem'}}>
-              ⚠️ 천문의 기운이 잠시 불안정합니다 ({data.errCode||'ERROR'}). 다시 시도해주세요.
-            </p>
-            <p style={{color:'rgba(252,165,165,0.6)',fontSize:'0.65rem',marginTop:'4px'}}>로컬 사주 분석으로 대체 표시됩니다.</p>
+          <div style={{padding:'8px 14px',borderRadius:10,background:'rgba(239,68,68,.08)',border:'1px solid rgba(239,68,68,.25)',marginBottom:10}}>
+            <p style={{color:'rgba(252,165,165,.9)',fontSize:'.72rem'}}>⚠️ 천문의 기운이 잠시 불안정합니다 ({data.errCode||'ERROR'}). 로컬 분석으로 표시됩니다.</p>
           </div>
         )}
-        <h2 style={{fontFamily:"'Noto Serif KR',serif",color:'#f0e6ff',fontSize:'1.6rem',fontWeight:300,lineHeight:1.4,marginBottom:'6px'}}>
-          {form.name||'고객님'}님의<br/><span className="text-shimmer">MBTI × 사주 성장 리포트</span>
+        <h2 style={{fontFamily:"'Noto Serif KR',serif",color:'#f0e6ff',fontSize:'1.6rem',fontWeight:300,lineHeight:1.4,marginBottom:6}}>
+          {form.name||'고객님'}님의<br/><span className="shimmer">AI × 사주 성장 리포트</span>
         </h2>
-        <p style={{color:'rgba(147,197,253,0.6)',fontSize:'0.78rem'}}>{form.mbti||'INFP'} · {data.dom.emoji} {data.dom.name} 우세 · 2026년</p>
-        <div style={{display:'flex',justifyContent:'center',gap:'8px',marginTop:'14px',flexWrap:'wrap'}}>
-          <button onClick={onShare} style={{display:'flex',alignItems:'center',gap:'6px',padding:'10px 18px',borderRadius:'12px',background:'linear-gradient(135deg,rgba(139,92,246,0.3),rgba(59,130,246,0.2))',border:'1px solid rgba(167,139,250,0.35)',color:'#c4b5fd',fontSize:'0.78rem',fontWeight:600,cursor:'pointer',letterSpacing:'0.04em'}}>
-            🔗 운세 공유하기
-          </button>
+        <p style={{color:'rgba(147,197,253,.6)',fontSize:'.78rem'}}>{form.mbti||'INFP'} · {data.dom.emoji} {data.dom.name} 우세 · 2026년</p>
+        <div style={{display:'flex',justifyContent:'center',marginTop:14}}>
+          <button onClick={onShare} style={{display:'flex',alignItems:'center',gap:6,padding:'10px 20px',borderRadius:12,background:'linear-gradient(135deg,rgba(139,92,246,.3),rgba(59,130,246,.2))',border:'1px solid rgba(167,139,250,.35)',color:'#c4b5fd',fontSize:'.78rem',fontWeight:600,cursor:'pointer'}}>🔗 운세 공유하기</button>
         </div>
       </div>
 
-      {/* 오행 밸런스 */}
+      {/* 오행 */}
       {card('g1',<>
         {hd('⚡','오행 에너지 밸런스','#fbbf24')}
         {data.oheng.map((o,i)=><OBar key={o.name} item={o} delay={scanned.g1?150+i*110:99999}/>)}
-        <p style={{color:'rgba(167,139,250,0.45)',fontSize:'0.67rem',marginTop:'10px',lineHeight:'1.8'}}>✦ <strong style={{color:data.dom.color}}>{data.dom.emoji} {data.dom.name}</strong> 기운 우세 · 대운(大運)과 교차하는 시점</p>
+        <p style={{color:'rgba(167,139,250,.45)',fontSize:'.67rem',marginTop:10,lineHeight:'1.8'}}>✦ <strong style={{color:data.dom.color}}>{data.dom.emoji} {data.dom.name}</strong> 기운 우세</p>
       </>,0)}
 
-      {/* 6대 핵심 게이지 */}
+      {/* 6대 게이지 */}
       {card('g2',<>
         {hd('🎯','6대 핵심 운세 지표','#f472b6')}
-        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'8px'}}>
-          <CG value={data.wealth} label="재물운" icon="💰" color="#fbbf24" delay={scanned.g2?200:99999}/>
-          <CG value={data.love} label="애정운" icon="💕" color="#f472b6" delay={scanned.g2?350:99999}/>
-          <CG value={data.career} label="커리어운" icon="🚀" color="#60a5fa" delay={scanned.g2?500:99999}/>
-          <CG value={data.health} label="건강운" icon="🌿" color="#4ade80" delay={scanned.g2?650:99999}/>
-          <CG value={data.mentor} label="귀인·인복" icon="🤝" color="#c084fc" delay={scanned.g2?800:99999}/>
-          <CG value={data.study} label="학업·시험운" icon="📚" color="#f97316" delay={scanned.g2?950:99999}/>
+        <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:8}}>
+          {GD.map((gd,i)=><CG key={gd.k} value={data.sc[gd.k]} label={gd.l} icon={gd.i} color={gd.c} delay={scanned.g2?200+i*150:99999}/>)}
         </div>
-        <div style={{marginTop:'12px',padding:'10px',borderRadius:'10px',textAlign:'center',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.05)'}}>
-          <p style={{color:'rgba(167,139,250,0.5)',fontSize:'0.66rem'}}>✦ 종합 운세 지수 <strong style={{color:'#a78bfa',fontSize:'0.78rem'}}>{Math.round((data.wealth+data.love+data.career+data.health+data.mentor+data.study)/6)}점</strong> / 100점</p>
+        <div style={{marginTop:12,padding:10,borderRadius:10,textAlign:'center',background:'rgba(255,255,255,.02)',border:'1px solid rgba(255,255,255,.05)'}}>
+          <p style={{color:'rgba(167,139,250,.5)',fontSize:'.66rem'}}>✦ 종합 운세 지수 <strong style={{color:'#a78bfa',fontSize:'.78rem'}}>{Math.round(Object.values(data.sc).reduce((a,b)=>a+b,0)/6)}점</strong> / 100점</p>
         </div>
       </>,0.08)}
 
-      {/* 성향 × 운명 */}
+      {/* 주간 */}
       {card('g3',<>
-        {hd('🧠','성향 × 운명 시너지','#a78bfa')}
-        <div style={{textAlign:'center',padding:'18px 12px',borderRadius:'14px',background:'rgba(139,92,246,0.06)',border:'1px solid rgba(139,92,246,0.12)'}}>
-          <div style={{fontSize:'2.4rem',fontWeight:700,fontFamily:"'Noto Serif KR',serif",background:'linear-gradient(135deg,#a78bfa,#60a5fa,#f472b6)',WebkitBackgroundClip:'text',WebkitTextFillColor:'transparent',marginBottom:'4px'}}>{form.mbti||'INFP'}</div>
-          <div style={{color:'#e2d9f3',fontSize:'0.95rem',fontWeight:600,marginBottom:'10px',fontFamily:"'Noto Serif KR',serif"}}>{data.trait}</div>
-          <div style={{height:'1px',background:'linear-gradient(to right,transparent,rgba(167,139,250,0.4),transparent)',margin:'10px 0'}}/>
-          <div style={{color:data.dom.color,fontSize:'0.95rem',fontWeight:600,textShadow:`0 0 10px ${data.dom.shadow}`}}>{data.dom.emoji} {data.dom.name}의 기운</div>
-          <p style={{color:'rgba(147,197,253,0.6)',fontSize:'0.7rem',marginTop:'8px',lineHeight:'1.9'}}>{data.trait}과 {data.dom.name}의 결합—<br/><strong style={{color:'#e2d9f3'}}>직관과 실행이 균형 이루는 강력한 조합</strong></p>
+        {hd('📈','주간 에너지 캘린더','#60a5fa')}
+        {scanned.g3&&<WeekChart data={data.week}/>}
+        <div style={{display:'flex',gap:12,justifyContent:'center',marginTop:10}}>
+          {[{l:'길',c:'#4ade80'},{l:'중',c:'#fbbf24'},{l:'소',c:'#f87171'}].map(x=>(
+            <div key={x.l} style={{display:'flex',alignItems:'center',gap:5}}>
+              <div style={{width:7,height:7,borderRadius:'50%',background:x.c,boxShadow:`0 0 4px ${x.c}`}}/>
+              <span style={{color:'rgba(167,139,250,.45)',fontSize:'.6rem'}}>{x.l}</span>
+            </div>
+          ))}
         </div>
       </>,0.16)}
 
-      {/* 주간 에너지 */}
+      {/* 로또 */}
       {card('g4',<>
-        {hd('📈','주간 에너지 캘린더','#60a5fa')}
-        {scanned.g4&&<WeekChart data={data.week}/>}
-        <div style={{display:'flex',gap:'12px',justifyContent:'center',marginTop:'10px'}}>
-          {[{l:'길',c:'#4ade80'},{l:'중',c:'#fbbf24'},{l:'소',c:'#f87171'}].map(x=>(
-            <div key={x.l} style={{display:'flex',alignItems:'center',gap:'5px'}}>
-              <div style={{width:'7px',height:'7px',borderRadius:'50%',background:x.c,boxShadow:`0 0 4px ${x.c}`}}/>
-              <span style={{color:'rgba(167,139,250,0.45)',fontSize:'0.6rem'}}>{x.l}</span>
-            </div>
-          ))}
-        </div>
+        {hd('🎰','AI 기반 행운 로또 번호 5세트','#fbbf24')}
+        <p style={{color:'rgba(251,191,36,.6)',fontSize:'.67rem',lineHeight:'1.7',marginBottom:12,paddingBottom:8,borderBottom:'1px solid rgba(251,191,36,.12)'}}>✦ 사주 오행과 AI 분석 기반으로 생성된 이번 주 추천 번호입니다. 🍀</p>
+        <LottoBalls sets={data.lotto}/>
+        <p style={{color:'rgba(167,139,250,.3)',fontSize:'.6rem',marginTop:10,textAlign:'center'}}>* 오락 목적이며 당첨을 보장하지 않습니다.</p>
       </>,0.24)}
 
-      {/* 로또 추천 + 복사 버튼 */}
-      {card('g5',<>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'16px'}}>
-          <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-            <span style={{fontSize:'1rem'}}>🎰</span>
-            <h3 style={{color:'#fbbf24',fontSize:'0.83rem',fontWeight:700,letterSpacing:'0.07em'}}>사주 기반 행운 로또 번호 5세트</h3>
-          </div>
-          <button onClick={onLotto} style={{padding:'6px 12px',borderRadius:'8px',background:'rgba(251,191,36,0.1)',border:'1px solid rgba(251,191,36,0.3)',color:'#fbbf24',fontSize:'0.68rem',fontWeight:600,cursor:'pointer',whiteSpace:'nowrap'}}>
-            📋 번호 복사
-          </button>
-        </div>
-        <div style={{padding:'4px 0 8px',borderBottom:'1px solid rgba(251,191,36,0.12)',marginBottom:'12px'}}>
-          <p style={{color:'rgba(251,191,36,0.6)',fontSize:'0.67rem',lineHeight:'1.7'}}>✦ 사주 오행과 MBTI 분석 기반으로 생성된 이번 주 추천 번호입니다. 행운을 빌어요! 🍀</p>
-        </div>
-        <LottoBalls sets={data.lotto}/>
-        <p style={{color:'rgba(167,139,250,0.3)',fontSize:'0.6rem',marginTop:'10px',textAlign:'center'}}>* 오락 목적의 행운 번호이며 당첨을 보장하지 않습니다.</p>
-      </>,0.32)}
-
-      {/* 행운 아이템 */}
-      {card('g6',<>
-        {hd('✨','행운 아이템 & 럭키 가이드',data.dom.color)}
-        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',marginBottom:'10px'}}>
-          {[
-            {icon:'🎨',label:'행운 컬러',val:data.lucky.color,c:data.lucky.hex},
-            {icon:'📍',label:'행운 장소',val:data.lucky.place,c:'#60a5fa'},
-            {icon:'🍽️',label:'행운 음식',val:data.lucky.food,c:'#4ade80'},
-            {icon:'💎',label:'행운 보석',val:data.lucky.gem,c:'#c084fc'},
-          ].map(x=>(
-            <div key={x.label} style={{padding:'12px',borderRadius:'12px',background:`${x.c}0d`,border:`1px solid ${x.c}28`,textAlign:'center'}}>
-              <div style={{fontSize:'1.1rem',marginBottom:'4px'}}>{x.icon}</div>
-              <div style={{color:'rgba(167,139,250,0.55)',fontSize:'0.6rem',marginBottom:'3px'}}>{x.label}</div>
-              <div style={{color:x.c,fontWeight:700,fontSize:'0.72rem',textShadow:`0 0 8px ${x.c}66`}}>{x.val}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{padding:'12px',borderRadius:'12px',background:`${data.lucky.hex}0a`,border:`1px solid ${data.lucky.hex}25`}}>
-          <p style={{color:'rgba(209,213,219,0.8)',fontSize:'0.75rem',lineHeight:'1.85'}}>
-            <NH c={data.lucky.hex}>{data.lucky.item}</NH>을 소지하고, <NH c={data.lucky.hex}>{data.lucky.color}</NH> 계열의 스타일링을 더하세요. <NH c={data.lucky.hex}>{data.lucky.fashion}</NH>이 올해 당신의 기운을 가장 강력하게 외부에 발산합니다.
-          </p>
-        </div>
-      </>,0.4)}
-
-      {/* 심층 리포트 아코디언 — 6개 항목, 선택한 고민만 기본 열림 */}
-      <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(167,139,250,0.1)',borderRadius:'18px',padding:'20px',marginBottom:'12px',animation:'riseR .7s ease .48s both'}}>
-        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'14px'}}>
-          <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+      {/* 심층 리포트 아코디언 */}
+      <div style={{background:'rgba(255,255,255,.02)',border:'1px solid rgba(167,139,250,.1)',borderRadius:18,padding:20,marginBottom:12,animation:'riseUp .7s ease .32s both'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+          <div style={{display:'flex',alignItems:'center',gap:8}}>
             <span style={{fontSize:'1rem'}}>📖</span>
-            <h3 style={{color:'#e2d9f3',fontSize:'0.83rem',fontWeight:700,letterSpacing:'0.07em'}}>심층 분석 리포트</h3>
+            <h3 style={{color:'#e2d9f3',fontSize:'.83rem',fontWeight:700,letterSpacing:'.07em'}}>심층 분석 리포트</h3>
           </div>
-          <span style={{padding:'3px 10px',borderRadius:'99px',background:'rgba(74,222,128,0.12)',border:'1px solid rgba(74,222,128,0.25)',color:'#4ade80',fontSize:'0.6rem',fontWeight:700,letterSpacing:'0.06em'}}>PRO</span>
+          <span style={{padding:'3px 10px',borderRadius:99,background:'rgba(74,222,128,.12)',border:'1px solid rgba(74,222,128,.25)',color:'#4ade80',fontSize:'.6rem',fontWeight:700}}>PRO · AI</span>
         </div>
-        {/* 종합 사주 총평 — 항상 열림 */}
+
         <Accordion icon="🌌" title="종합 사주 총평 — 올해의 전체 기운" open={true} accent="#a78bfa">
-          <p style={{marginBottom:'10px'}}>{data.overall}</p>
-          <div style={{padding:'10px',borderRadius:'10px',background:'rgba(167,139,250,0.07)',border:'1px solid rgba(167,139,250,0.15)'}}>
-            <p style={{color:'rgba(167,139,250,0.8)',fontSize:'0.7rem'}}>✦ 핵심 키워드: <NH c="#a78bfa">집중</NH> · <NH c="#60a5fa">확장</NH> · <NH c="#f472b6">연결</NH></p>
+          <Md text={data.overall}/>
+          <div style={{padding:10,borderRadius:10,background:'rgba(167,139,250,.07)',border:'1px solid rgba(167,139,250,.15)',marginTop:10}}>
+            <p style={{color:'rgba(167,139,250,.8)',fontSize:'.7rem'}}>✦ 핵심 키워드: <strong style={{color:'#a78bfa'}}>집중</strong> · <strong style={{color:'#60a5fa'}}>확장</strong> · <strong style={{color:'#f472b6'}}>연결</strong></p>
           </div>
         </Accordion>
-        {/* 재물운 */}
-        <Accordion icon="💰" title="재물운 집중 분석 — 귀인과 재테크 전략" open={form.concern==='wealth'} accent="#fbbf24">
-          <p style={{marginBottom:'10px'}}>{data.wealthDeep}</p>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'6px'}}>
-            {[{l:'행운 방위',v:'동남쪽',icon:'🧭'},{l:'재물 피크',v:'3~5월',icon:'📅'},{l:'행운 숫자',v:data.lucky.number,icon:'🔢'},{l:'피할 것',v:'충동 지출',icon:'⚠️'}].map(x=>(
-              <div key={x.l} style={{padding:'9px',borderRadius:'10px',textAlign:'center',background:'rgba(251,191,36,0.06)',border:'1px solid rgba(251,191,36,0.15)'}}>
-                <div style={{fontSize:'0.85rem'}}>{x.icon}</div>
-                <div style={{color:'rgba(167,139,250,0.5)',fontSize:'0.58rem',margin:'2px 0'}}>{x.l}</div>
-                <div style={{color:'#fbbf24',fontWeight:700,fontSize:'0.74rem'}}>{x.v}</div>
-              </div>
-            ))}
-          </div>
+
+        <Accordion icon="💰" title="재물운 — 귀인과 재테크 전략" open={form.concern==='wealth'} accent="#fbbf24">
+          <Md text={data.wealthDeep}/>
         </Accordion>
-        {/* 애정운 */}
-        <Accordion icon="💕" title="애정 및 대인관계 — 연애·파트너십 전략" open={form.concern==='love'} accent="#f472b6">
-          <p>{data.loveDeep}</p>
-          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(244,114,182,0.06)',border:'1px solid rgba(244,114,182,0.15)'}}>
-            <p style={{color:'rgba(244,114,182,0.8)',fontSize:'0.7rem'}}>✦ 인연 피크: <NH c="#f472b6">5월·9월</NH> · 인연 장소: <NH c="#f472b6">지적 모임·온라인 커뮤니티</NH></p>
-          </div>
+
+        <Accordion icon="💕" title="애정운 — 연애·파트너십 전략" open={form.concern==='love'} accent="#f472b6">
+          <Md text={data.loveDeep}/>
         </Accordion>
-        {/* 커리어운 */}
-        <Accordion icon="🚀" title="커리어운 분석 — 성장과 성취 전략" open={form.concern==='career'} accent="#60a5fa">
-          <p>{data.careerDeep}</p>
-          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(96,165,250,0.06)',border:'1px solid rgba(96,165,250,0.15)'}}>
-            <p style={{color:'rgba(96,165,250,0.8)',fontSize:'0.7rem'}}>✦ 커리어 피크: <NH c="#60a5fa">7~9월</NH> · 귀인 타입: <NH c="#60a5fa">멘토·선배·업계 인플루언서</NH></p>
-          </div>
+
+        <Accordion icon="🚀" title="커리어운 — 성장과 성취 전략" open={form.concern==='career'} accent="#60a5fa">
+          <Md text={data.careerDeep}/>
         </Accordion>
-        {/* 건강운 */}
-        <Accordion icon="🌿" title="건강운 분석 — 체력과 활력 관리" open={form.concern==='health'} accent="#4ade80">
-          <p>{data.healthDeep}</p>
-          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(74,222,128,0.06)',border:'1px solid rgba(74,222,128,0.15)'}}>
-            <p style={{color:'rgba(74,222,128,0.8)',fontSize:'0.7rem'}}>✦ 행운 음식: <NH c="#4ade80">{data.lucky.food}</NH> · 건강 보석: <NH c="#4ade80">{data.lucky.gem}</NH></p>
-          </div>
+
+        <Accordion icon="🌿" title="건강운 — 체력과 활력 관리" open={form.concern==='health'} accent="#4ade80">
+          <Md text={data.healthDeep}/>
         </Accordion>
-        {/* 귀인·인복 */}
+
         <Accordion icon="🤝" title="귀인·인복 — 좋은 사람과의 인연" open={form.concern==='mentor'} accent="#c084fc">
-          <p>{data.mentorDeep}</p>
-          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(192,132,252,0.06)',border:'1px solid rgba(192,132,252,0.15)'}}>
-            <p style={{color:'rgba(192,132,252,0.8)',fontSize:'0.7rem'}}>✦ 귀인 피크: <NH c="#c084fc">봄·가을 모임</NH> · 귀인 장소: <NH c="#c084fc">{data.lucky.place}</NH></p>
-          </div>
+          <Md text={data.mentorDeep}/>
         </Accordion>
-        {/* 학업·시험운 */}
+
         <Accordion icon="📚" title="학업·시험운 — 합격의 기운" open={form.concern==='study'} accent="#f97316">
-          <p>{data.studyDeep}</p>
-          <div style={{marginTop:'10px',padding:'10px',borderRadius:'10px',background:'rgba(249,115,22,0.06)',border:'1px solid rgba(249,115,22,0.15)'}}>
-            <p style={{color:'rgba(249,115,22,0.8)',fontSize:'0.7rem'}}>✦ 합격 피크: <NH c="#f97316">3월·9월</NH> · 행운 장소: <NH c="#f97316">{data.lucky.place}</NH></p>
-          </div>
+          <Md text={data.studyDeep}/>
         </Accordion>
-        {/* 풍수 개운법 */}
-        <Accordion icon="🌅" title="생활 습관 개운법 — 풍수 & 아침 루틴" accent="#4ade80">
-          <p style={{marginBottom:'10px'}}>{data.habitDeep}</p>
-          <div style={{display:'flex',flexDirection:'column',gap:'6px'}}>
-            {['기상 직후 미지근한 물 한 잔 + 자연광 받기','행운 방향으로 책상·침대 위치 조정','취침 전 감사 저널링 5분'].map((r,i)=>(
-              <div key={i} style={{display:'flex',alignItems:'flex-start',gap:'8px',padding:'9px 11px',borderRadius:'10px',background:'rgba(74,222,128,0.06)',border:'1px solid rgba(74,222,128,0.12)'}}>
-                <span style={{color:'#4ade80',fontWeight:700,fontSize:'0.76rem',flexShrink:0}}>0{i+1}</span>
-                <span style={{fontSize:'0.76rem',lineHeight:'1.6'}}>{r}</span>
+
+        <Accordion icon="🌅" title="생활 개운법 — 행운 아이템 & 루틴" accent="#4ade80">
+          <Md text={data.habitDeep}/>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginTop:12}}>
+            {[
+              {icon:'🎨',label:'행운 컬러',val:data.lucky.color,c:data.lucky.hex},
+              {icon:'📍',label:'행운 장소',val:data.lucky.place,c:'#60a5fa'},
+              {icon:'🍽️',label:'행운 음식',val:data.lucky.food,c:'#4ade80'},
+              {icon:'💎',label:'행운 보석',val:data.lucky.gem,c:'#c084fc'},
+            ].map(x=>(
+              <div key={x.label} style={{padding:12,borderRadius:12,background:`${x.c}0d`,border:`1px solid ${x.c}28`,textAlign:'center'}}>
+                <div style={{fontSize:'1.1rem',marginBottom:4}}>{x.icon}</div>
+                <div style={{color:'rgba(167,139,250,.55)',fontSize:'.6rem',marginBottom:3}}>{x.label}</div>
+                <div style={{color:x.c,fontWeight:700,fontSize:'.72rem'}}>{x.val}</div>
               </div>
             ))}
           </div>
         </Accordion>
       </div>
 
-      {/* Share CTA */}
-      <button onClick={onShare} style={{width:'100%',padding:'15px',borderRadius:'16px',background:'linear-gradient(135deg,rgba(139,92,246,0.25),rgba(59,130,246,0.2))',border:'1px solid rgba(167,139,250,0.3)',color:'#c4b5fd',fontSize:'0.82rem',fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:'8px',marginBottom:'10px',letterSpacing:'0.04em',animation:'riseR .7s ease .6s both'}}>
-        🔗 나의 MBTI × 사주 결과 친구에게 공유하기 ✨
+      {/* 공유 CTA */}
+      <button onClick={onShare} style={{width:'100%',padding:15,borderRadius:16,background:'linear-gradient(135deg,rgba(139,92,246,.25),rgba(59,130,246,.2))',border:'1px solid rgba(167,139,250,.3)',color:'#c4b5fd',fontSize:'.82rem',fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:8,marginBottom:10,letterSpacing:'.04em',animation:'riseUp .7s ease .5s both'}}>
+        🔗 나의 AI × 사주 결과 친구에게 공유하기 ✨
       </button>
 
-      {/* Premium CTA */}
-      <div style={{padding:'20px',borderRadius:'16px',textAlign:'center',background:'linear-gradient(135deg,rgba(251,191,36,0.08),rgba(249,115,22,0.06))',border:'1px solid rgba(251,191,36,0.2)',marginBottom:'10px',animation:'riseR .7s ease .65s both'}}>
-        <div style={{fontSize:'1.5rem',marginBottom:'8px'}}>👑</div>
-        <p style={{color:'#fbbf24',fontSize:'0.9rem',fontWeight:700,fontFamily:"'Noto Serif KR',serif",marginBottom:'6px',letterSpacing:'0.04em'}}>상세 프리미엄 분석 & 1:1 상담 서비스</p>
-        <p style={{color:'rgba(251,191,36,0.6)',fontSize:'0.73rem',lineHeight:'1.8',marginBottom:'10px'}}>더 깊은 사주 풀이, 택일, 이름 작명, 궁합 분석까지<br/>전문 명리학사와의 1:1 상담 서비스를 준비 중입니다.</p>
-        <span style={{display:'inline-block',padding:'7px 18px',borderRadius:'99px',background:'rgba(251,191,36,0.15)',border:'1px solid rgba(251,191,36,0.3)',color:'#fbbf24',fontSize:'0.72rem',fontWeight:600,letterSpacing:'0.08em'}}>🔔 오픈 알림 신청 준비 중</span>
+      {/* 프리미엄 CTA */}
+      <div style={{padding:20,borderRadius:16,textAlign:'center',background:'linear-gradient(135deg,rgba(251,191,36,.08),rgba(249,115,22,.06))',border:'1px solid rgba(251,191,36,.2)',marginBottom:10,animation:'riseUp .7s ease .55s both'}}>
+        <div style={{fontSize:'1.5rem',marginBottom:8}}>👑</div>
+        <p style={{color:'#fbbf24',fontSize:'.9rem',fontWeight:700,fontFamily:"'Noto Serif KR',serif",marginBottom:6}}>상세 프리미엄 분석 & 1:1 상담 서비스</p>
+        <p style={{color:'rgba(251,191,36,.6)',fontSize:'.73rem',lineHeight:'1.8',marginBottom:10}}>더 깊은 사주 풀이, 택일, 작명, 궁합 분석까지<br/>전문 명리학사와의 1:1 상담 서비스를 준비 중입니다.</p>
+        <span style={{display:'inline-block',padding:'7px 18px',borderRadius:99,background:'rgba(251,191,36,.15)',border:'1px solid rgba(251,191,36,.3)',color:'#fbbf24',fontSize:'.72rem',fontWeight:600}}>🔔 오픈 알림 신청 준비 중</span>
       </div>
     </div>
   );
 }
 
-/* ── MAIN APP ── */
+/* ══════════════════════════════════════════════════
+   메인 앱
+══════════════════════════════════════════════════ */
 function App(){
   const [form,setForm]=useState({name:'',chineseName:'',gender:'',birthdate:'',birthHour:'',city:'',mbti:'',concern:'',phone:'',email:'',agree:false});
   const [analyzing,setAnalyzing]=useState(false);
@@ -771,12 +703,10 @@ function App(){
   const [focused,setFocused]=useState(null);
   const [hoverC,setHoverC]=useState(null);
   const [shareOpen,setShareOpen]=useState(false);
-  const [lottoOpen,setLottoOpen]=useState(false);
-  const reportRef=useRef(null);
   const resultAnchor=useRef(null);
-
   const set=(k,v)=>setForm(f=>({...f,[k]:v}));
 
+  /* 유효성 검사 */
   const validate=()=>{
     const e={};
     if(!form.name.trim())e.name=true;
@@ -785,264 +715,82 @@ function App(){
     if(!form.birthHour)e.birthHour=true;
     if(!form.mbti)e.mbti=true;
     if(!form.concern)e.concern=true;
-    setErrors(e);
-    return Object.keys(e).length===0;
+    setErrors(e);return Object.keys(e).length===0;
   };
 
-  /* ── 웹훅 전송: Make.com 구글시트 개별 필드 ── */
+  /* 웹훅 전송 */
   const sendWebhook=async(data,lotto)=>{
-    const now=new Date();
-    const pad=n=>String(n).padStart(2,'0');
-    const dateStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
-    const lottoStr=lotto.map((s,i)=>`세트${i+1}: ${s.join('-')}`).join(' | ');
-    const nameVal=data.chineseName?`${data.name} (${data.chineseName})`:data.name;
-    const payload={
-      /* 구글시트 컬럼과 1:1 매핑 — 단순 flat JSON */
-      "날짜":        dateStr,
-      "이름":        nameVal,
-      "생년월일":    data.birthdate,
-      "태어난시간":  data.birthHour,
-      "성별":        data.gender==='male'?'남성':data.gender==='female'?'여성':'',
-      "태어난도시":  data.city||'',
-      "MBTI":        data.mbti,
-      "고민내용":    CONCERN_KR[data.concern]||data.concern,
-      "추천로또번호":lottoStr,
-      "유료결제여부":"Free",
-      "전화번호":    data.phone||'',
-      "이메일":      data.email||'',
-    };
-    try{
-      await fetch(WEBHOOK,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload),
-      });
-    }catch(e){console.log('Webhook error:',e);}
+    const now=new Date();const pad=n=>String(n).padStart(2,'0');
+    const dateStr=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-'+pad(now.getDate())+' '+pad(now.getHours())+':'+pad(now.getMinutes());
+    const lottoStr=lotto.map((s,i)=>'세트'+(i+1)+': '+s.join('-')).join(' | ');
+    const payload={"날짜":dateStr,"이름":(data.name||'')+(data.chineseName?' ('+data.chineseName+')':''),"생년월일":data.birthdate||'',
+      "태어난시간":data.birthHour||'',
+      "성별":data.gender==='male'?'남성':data.gender==='female'?'여성':'',
+      "태어난도시":data.city||'',"MBTI":data.mbti||'',
+      "고민내용":CONCERN_KR[data.concern]||'',
+      "추천로또번호":lottoStr,"유료결제여부":"Free","전화번호":data.phone||'',"이메일":data.email||''};
+    try{await fetch(WEBHOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});}
+    catch(e){console.log('Webhook error:',e);}
   };
 
+  /* 제출 */
   const handleSubmit=()=>{
     if(!validate())return;
-    /* GA4 이벤트 — 동의 여부와 무관하게 항상 발생 */
     if(typeof gtag==='function'){
       gtag('event','saju_analysis_click',{mbti:form.mbti,concern:form.concern,agreed:form.agree});
       gtag('event','complete_saju_analysis',{mbti:form.mbti,concern:form.concern,gender:form.gender,birth_year:(form.birthdate||'').slice(0,4),agreed:form.agree});
     }
-    setReport(null);
-    setAnalyzing(true);
-    /* Gemini API 호출 — 애니메이션 유지하면서 비동기 실행 */
-    handleDone();
+    setReport(null);setAnalyzing(true);
+    runAnalysis();
   };
 
-  /* ── Gemini 지수 백오프 재시도 ── */
-  const fetchWithBackoff=async(options,maxRetries=3)=>{
-    let lastErr;
-    for(let attempt=0;attempt<maxRetries;attempt++){
-      try{
-        const res=await fetch(GEMINI_URL,options);
-        if(res.status===429){
-          const wait=Math.pow(2,attempt)*1500+Math.random()*500;
-          console.warn('[Gemini 429] '+(attempt+1)+'/'+maxRetries+'회, '+Math.round(wait/1000)+'초 대기 후 재시도...');
-          await new Promise(function(r){setTimeout(r,wait);});
-          lastErr=new Error('HTTP_429');
-          continue;
-        }
-        return res;
-      }catch(netErr){
-        lastErr=netErr;
-        if(attempt<maxRetries-1){
-          const wait=Math.pow(2,attempt)*1000;
-          await new Promise(function(r){setTimeout(r,wait);});
-        }
+  const runAnalysis=useCallback(async()=>{
+    const local=genLocalReport(form);
+    try{
+      const ai=await callGemini(form,local);
+      /* 로또 검증 */
+      let lotto=local.lotto;
+      if(Array.isArray(ai.lotto)&&ai.lotto.length>=5){
+        const valid=ai.lotto.slice(0,5).map(set=>{
+          if(!Array.isArray(set))return null;
+          const nums=set.map(Number).filter(n=>n>=1&&n<=45);
+          const uniq=[...new Set(nums)];
+          return uniq.length>=6?uniq.slice(0,6).sort((a,b)=>a-b):null;
+        }).filter(Boolean);
+        if(valid.length>=5)lotto=valid;
       }
-    }
-    throw lastErr||new Error('NETWORK_ERROR');
-  };
-
-  const callGemini=async function(f,localRep){
-    const CKR={wealth:'재물·금전',love:'애정·관계',career:'커리어·직업',health:'건강·활력',mentor:'귀인·인복',study:'학업·시험운'};
-    const sj=localRep.sj||{};
-    const domName=(localRep.dom&&localRep.dom.name)||'';
-    const weakName=localRep.weakName||'';
-
-    /* 프롬프트: 문자열 배열 join — 내부에 백틱 없음 */
-    var lines=[
-      '당신은 사주명리학 40년 경력의 대가입니다.',
-      '아래 사주 정보를 바탕으로 격국(格局), 용신(用神), 신강/신약을 포함한 전문 분석을 수행한 후,',
-      '반드시 순수 JSON 형식으로만 응답하십시오.',
-      '',
-      '[사용자 정보]',
-      '이름: '+(f.name||'익명')+(f.chineseName?' ('+f.chineseName+')':''),
-      '성별: '+(f.gender==='male'?'남성':'여성'),
-      '생년월일: '+(f.birthdate||'')+' / 띠: '+(sj.tiTxt||''),
-      '출생시간: '+(f.birthHour||'모름')+'시',
-      '출생지: '+(f.city||'미입력'),
-      'MBTI: '+(f.mbti||''),
-      '핵심 고민: '+(CKR[f.concern]||f.concern||''),
-      '',
-      '[사전 계산된 사주]',
-      '연주: '+(sj.ySaju||'미상'),
-      '월지: '+(sj.mJi||'미상'),
-      '일주: '+(sj.dGan||'')+(sj.dJi||'')+'일주',
-      '시지: '+(sj.hJi||'미상'),
-      '주도 오행: '+domName,
-      '용신 후보(약한 오행): '+weakName,
-      '',
-      '[분석 필수 항목]',
-      '1. 격국(格局): 일주와 월지의 관계로 정격/변격 판단',
-      '2. 신강/신약: 일간 세력 판단 후 억부용신 적용',
-      '3. 용신(用神)과 기신(忌神): 보완 오행과 피해야 할 오행',
-      '4. MBTI '+(f.mbti||'')+' 와 사주의 교차 분석',
-      '5. 고민 ['+(CKR[f.concern]||'')+'] 에 대한 구체적 전문 조언 — 가장 상세히',
-      '6. 모든 시기는 X월~Y월 형식으로 명시',
-      '',
-      '[출력 규칙]',
-      '- 순수 JSON 객체만 출력. 코드블록이나 마크다운 절대 금지',
-      '- 텍스트 필드 값은 줄바꿈 없이 한 줄로 작성',
-      '- overall 350자 이상, 각 항목 250자 이상',
-      '- 뻔한 표현 금지',
-      '- lotto: 1~45 중복 없는 숫자 6개씩 5세트, 사주 오행 기반 생성',
-      '',
-      '[응답 형식 — 이 구조 그대로, 값만 채울 것]',
-      '{"overall":"...","wealthDeep":"...","loveDeep":"...","careerDeep":"...","healthDeep":"...","habitDeep":"...","mentorDeep":"...","studyDeep":"...","lotto":[[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n]]}'
-    ];
-    var prompt=lines.join('\n');
-
-    /* API 호출 */
-    var requestBody=JSON.stringify({
-      contents:[{parts:[{text:prompt}]}],
-      generationConfig:{temperature:0.85,topP:0.95,maxOutputTokens:4096}
-    });
-    var requestOptions={
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:requestBody
-    };
-
-    var res;
-    try{
-      res=await fetchWithBackoff(requestOptions,3);
-    }catch(netErr){
-      console.error('[Gemini 네트워크 실패]',netErr);
-      throw new Error(netErr.message||'NETWORK_ERROR');
-    }
-
-    if(!res.ok){
-      var status=res.status;
-      var body=await res.text().catch(function(){return '';});
-      console.error('[Gemini HTTP '+status+']',body.slice(0,300));
-      throw new Error('HTTP_'+status);
-    }
-
-    var data=await res.json();
-    var raw=(data&&data.candidates&&data.candidates[0]&&
-             data.candidates[0].content&&data.candidates[0].content.parts&&
-             data.candidates[0].content.parts[0]&&
-             data.candidates[0].content.parts[0].text)||'';
-
-    if(!raw){
-      console.error('[Gemini 빈 응답]',JSON.stringify(data).slice(0,400));
-      throw new Error('EMPTY_RESPONSE');
-    }
-    console.log('[Gemini 원본]',raw.slice(0,200));
-
-    /* JSON 추출 파이프라인 */
-    var c=raw.replace(/```json/gi,'').replace(/```/g,'').trim();
-    var s2=c.indexOf('{');
-    var e2=c.lastIndexOf('}');
-    if(s2<0||e2<=s2){
-      console.error('[JSON 추출 실패]',c.slice(0,200));
-      throw new Error('JSON_NOT_FOUND');
-    }
-    c=c.slice(s2,e2+1);
-    /* 문자열 값 내부 실제 개행 → \\n 치환 */
-    c=c.replace(/"((?:[^"\\]|\\.)*)"/g,function(m,v){
-      return '"'+v.replace(/\r?\n/g,'\\n')+'"';
-    });
-    /* 제어문자 제거 */
-    c=c.replace(/[\x00-\x08\x0b\x0c\x0e-\x1f]/g,'');
-
-    var parsed;
-    try{
-      parsed=JSON.parse(c);
-    }catch(pe){
-      console.error('[JSON 파싱 실패]',pe.message,c.slice(0,300));
-      throw new Error('PARSE_ERROR');
-    }
-    console.log('[Gemini 파싱 성공]',Object.keys(parsed).join(', '));
-    return parsed;
-  };
-
-
-
-  
-
-    const handleDone=useCallback(async()=>{
-    /* 1) 로컬 사주 엔진 — 오행·점수 즉시 계산 (Gemini 대기 동안 UI 준비) */
-    const localRep=genReport(form);
-
-    try{
-      /* 2) Gemini API 호출 — 텍스트 + 로또 번호 실시간 생성 */
-      const aiData=await callGemini(form,localRep);
-
-      /* 3) AI 로또 번호 검증 및 적용 */
-      let finalLotto=localRep.lotto; /* 기본값: 로컬 생성 */
-      if(Array.isArray(aiData.lotto)&&aiData.lotto.length>=5){
-        /* 각 세트가 유효한 배열인지 검증 */
-        const validLotto=aiData.lotto
-          .slice(0,5)
-          .map(set=>{
-            if(!Array.isArray(set))return null;
-            const nums=set.map(Number).filter(n=>n>=1&&n<=45);
-            const unique=[...new Set(nums)];
-            return unique.length>=6?unique.slice(0,6).sort((a,b)=>a-b):null;
-          })
-          .filter(Boolean);
-        if(validLotto.length>=5) finalLotto=validLotto;
-      }
-
-      /* 4) 로컬 결과 + AI 텍스트 + AI 로또 합성 */
-      const merged={
-        ...localRep,
-        lotto:      finalLotto,
-        overall:    aiData.overall    ||localRep.overall,
-        wealthDeep: aiData.wealthDeep ||localRep.wealthDeep,
-        loveDeep:   aiData.loveDeep   ||localRep.loveDeep,
-        careerDeep: aiData.careerDeep ||localRep.careerDeep,
-        healthDeep: aiData.healthDeep ||localRep.healthDeep,
-        habitDeep:  aiData.habitDeep  ||localRep.habitDeep,
-        mentorDeep: aiData.mentorDeep ||localRep.mentorDeep,
-        studyDeep:  aiData.studyDeep  ||localRep.studyDeep,
-        aiPowered:  true,
-        apiError:   false,
-      };
-      setAnalyzing(false);
-      setReport(merged);
-      if(form.agree) sendWebhook(form,merged.lotto);
+      const merged={...local,lotto,
+        overall:ai.overall||'',wealthDeep:ai.wealthDeep||'',loveDeep:ai.loveDeep||'',
+        careerDeep:ai.careerDeep||'',healthDeep:ai.healthDeep||'',habitDeep:ai.habitDeep||'',
+        mentorDeep:ai.mentorDeep||'',studyDeep:ai.studyDeep||'',
+        aiPowered:true,apiError:false};
+      setAnalyzing(false);setReport(merged);
+      if(form.agree)sendWebhook(form,merged.lotto);
       setTimeout(()=>resultAnchor.current?.scrollIntoView({behavior:'smooth',block:'start'}),200);
-
     }catch(err){
-      /* 5) API 오류 — 콘솔에 상세 출력, 사용자에게 에러 코드 포함 안내 */
       const errCode=err.message||'UNKNOWN';
-      console.error('[Gemini 최종 오류]',errCode,err);
+      console.error('[분석 오류]',errCode,err);
       setAnalyzing(false);
-      /* 로컬 분석 결과는 항상 표시 */
-      setReport({...localRep,aiPowered:false,apiError:true,errCode});
-      if(form.agree) sendWebhook(form,localRep.lotto);
+      setReport({...local,aiPowered:false,apiError:true,errCode});
+      if(form.agree)sendWebhook(form,local.lotto);
       setTimeout(()=>resultAnchor.current?.scrollIntoView({behavior:'smooth',block:'start'}),200);
     }
   },[form]);
 
-  const handleReset=()=>{setReport(null);setForm({name:'',chineseName:'',gender:'',birthdate:'',birthHour:'',city:'',mbti:'',concern:'',phone:'',email:'',agree:false});window.scrollTo({top:0,behavior:'smooth'});};
+  const handleReset=()=>{
+    setReport(null);
+    setForm({name:'',chineseName:'',gender:'',birthdate:'',birthHour:'',city:'',mbti:'',concern:'',phone:'',email:'',agree:false});
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
 
-  const inp=(k)=>({
-    width:'100%',padding:'12px 14px',borderRadius:'12px',fontSize:'0.86rem',
-    background:focused===k?'rgba(139,92,246,0.1)':'rgba(255,255,255,0.04)',
-    border:`1px solid ${errors[k]?'rgba(248,113,113,0.6)':focused===k?'rgba(167,139,250,0.6)':'rgba(255,255,255,0.1)'}`,
+  /* 인풋 스타일 */
+  const inp=k=>({width:'100%',padding:'12px 14px',borderRadius:12,fontSize:'.86rem',
+    background:focused===k?'rgba(139,92,246,.1)':'rgba(255,255,255,.04)',
+    border:`1px solid ${errors[k]?'rgba(248,113,113,.6)':focused===k?'rgba(167,139,250,.6)':'rgba(255,255,255,.1)'}`,
     color:'#e2d9f3',outline:'none',transition:'all .3s',fontFamily:'inherit',
-    boxShadow:focused===k?'0 0 0 3px rgba(139,92,246,0.15)':'none',
-  });
-  const lbl={color:'#a78bfa',fontSize:'0.7rem',letterSpacing:'0.12em',textTransform:'uppercase',fontWeight:600,marginBottom:'7px',display:'block'};
-  const sec={background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.07)',borderRadius:'18px',padding:'20px',marginBottom:'12px'};
+    boxShadow:focused===k?'0 0 0 3px rgba(139,92,246,.15)':'none'});
+  const lbl={color:'#a78bfa',fontSize:'.7rem',letterSpacing:'.12em',textTransform:'uppercase',fontWeight:600,marginBottom:7,display:'block'};
+  const sec={background:'rgba(255,255,255,.02)',border:'1px solid rgba(255,255,255,.07)',borderRadius:18,padding:20,marginBottom:12};
 
   return(
     <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#050510,#0a0a1e 30%,#080820 60%,#050515)',fontFamily:"'Noto Sans KR',sans-serif",position:'relative'}}>
@@ -1050,187 +798,163 @@ function App(){
       <div style={{position:'fixed',inset:0,pointerEvents:'none',background:'radial-gradient(ellipse 60% 50% at 15% 10%,rgba(139,92,246,.1),transparent)',zIndex:0}}/>
       <div style={{position:'fixed',inset:0,pointerEvents:'none',background:'radial-gradient(ellipse 50% 60% at 85% 90%,rgba(59,130,246,.08),transparent)',zIndex:0}}/>
 
-      <div style={{position:'relative',zIndex:1,maxWidth:'480px',margin:'0 auto',padding:'0 16px 40px'}}>
+      <div style={{position:'relative',zIndex:1,maxWidth:480,margin:'0 auto',padding:'0 16px 40px'}}>
 
         {/* ─── 헤더 ─── */}
         <div className="no-print" style={{textAlign:'center',padding:'40px 0 28px',animation:'rise .9s ease forwards'}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:'10px',marginBottom:'14px'}}>
-            <div style={{width:'1px',height:'36px',background:'linear-gradient(to bottom,transparent,rgba(167,139,250,.55))'}}/>
-            <span style={{color:'#a78bfa',fontSize:'0.65rem',letterSpacing:'0.28em',fontWeight:600}}>✦ COSMIC INSIGHT ENGINE 2026 ✦</span>
-            <div style={{width:'1px',height:'36px',background:'linear-gradient(to bottom,transparent,rgba(167,139,250,.55))'}}/>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:10,marginBottom:14}}>
+            <div style={{width:1,height:36,background:'linear-gradient(to bottom,transparent,rgba(167,139,250,.55))'}}/>
+            <span style={{color:'#a78bfa',fontSize:'.65rem',letterSpacing:'.28em',fontWeight:600}}>✦ 아우름사주 × AI 명리학 2026 ✦</span>
+            <div style={{width:1,height:36,background:'linear-gradient(to bottom,transparent,rgba(167,139,250,.55))'}}/>
           </div>
-          <h1 className="logo-glow" style={{fontFamily:"'Noto Serif KR',serif",fontWeight:300,color:'#f0e6ff',fontSize:'2.8rem',letterSpacing:'0.05em',marginBottom:'10px'}}>
-            MY SAJU<br/><span className="text-shimmer" style={{fontSize:'0.55em',letterSpacing:'0.22em'}}>MASTER</span>
+          <h1 className="logo-glow" style={{fontFamily:"'Noto Serif KR',serif",fontWeight:300,color:'#f0e6ff',fontSize:'2.8rem',letterSpacing:'.05em',marginBottom:10}}>
+            아우름사주<br/><span className="shimmer" style={{fontSize:'.45em',letterSpacing:'.18em'}}>AI SAJU MASTER</span>
           </h1>
-          <p style={{color:'rgba(167,139,250,.65)',fontSize:'0.8rem',letterSpacing:'0.07em',lineHeight:'1.9'}}>
-            사주명리학 × MBTI 심층 분석<br/>
-            <span style={{color:'rgba(147,197,253,.5)',fontSize:'0.7rem'}}>당신의 운명을 우주가 해석합니다</span>
+          <p style={{color:'rgba(167,139,250,.65)',fontSize:'.8rem',letterSpacing:'.07em',lineHeight:'1.9'}}>
+            사주명리학 × MBTI × AI 심층 분석<br/>
+            <span style={{color:'rgba(147,197,253,.5)',fontSize:'.7rem'}}>당신만을 위한 맞춤형 운명 해석</span>
           </p>
-          <div style={{display:'flex',justifyContent:'center',marginTop:'12px',gap:'6px',flexWrap:'wrap'}}>
-            {['오행','음양','사주','MBTI','운세','로또','풍수'].map((t,i)=>(
-              <span key={t} style={{padding:'3px 10px',borderRadius:'99px',background:`hsla(${212+i*17},80%,60%,.13)`,border:`1px solid hsla(${212+i*17},80%,60%,.22)`,color:`hsl(${212+i*17},80%,72%)`,fontSize:'0.65rem',letterSpacing:'0.04em'}}>{t}</span>
+          <div style={{display:'flex',justifyContent:'center',marginTop:12,gap:6,flexWrap:'wrap'}}>
+            {['오행','일주','격국','용신','MBTI','로또','개운법'].map((t,i)=>(
+              <span key={t} style={{padding:'3px 10px',borderRadius:99,background:`hsla(${212+i*17},80%,60%,.13)`,border:`1px solid hsla(${212+i*17},80%,60%,.22)`,color:`hsl(${212+i*17},80%,72%)`,fontSize:'.65rem'}}>{t}</span>
             ))}
           </div>
         </div>
 
-        {/* ─── 폼 ─── */}
+        {/* ─── 입력 폼 ─── */}
         {!report&&(
           <div className="no-print">
+
             {/* 이름 + 한자 + 성별 */}
             <div style={sec}>
-              <div style={{marginBottom:'14px'}}>
+              <div style={{marginBottom:14}}>
                 <label style={lbl}>이름 *</label>
-                <div style={{display:'flex',gap:'10px'}}>
+                <div style={{display:'flex',gap:10}}>
                   <div style={{flex:1}}>
-                    <input
-                      placeholder="홍길동"
-                      value={form.name}
-                      onChange={e=>set('name',e.target.value)}
-                      onFocus={()=>setFocused('name')}
-                      onBlur={()=>setFocused(null)}
-                      style={inp('name')}
-                    />
-                    <span style={{color:'rgba(167,139,250,.35)',fontSize:'0.62rem',marginLeft:'4px'}}>한글 이름</span>
+                    <input placeholder="홍길동" value={form.name} onChange={e=>set('name',e.target.value)} onFocus={()=>setFocused('name')} onBlur={()=>setFocused(null)} style={inp('name')}/>
+                    {errors.name&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'.67rem',marginTop:4}}>이름을 입력해 주세요</p>}
+                    <span style={{color:'rgba(167,139,250,.35)',fontSize:'.62rem',marginLeft:4}}>한글 이름</span>
                   </div>
                   <div style={{flex:1}}>
-                    <input
-                      placeholder="洪吉童 (선택)"
-                      value={form.chineseName}
-                      onChange={e=>set('chineseName',e.target.value)}
-                      onFocus={()=>setFocused('cn')}
-                      onBlur={()=>setFocused(null)}
-                      style={inp('cn')}
-                    />
-                    <span style={{color:'rgba(167,139,250,.35)',fontSize:'0.62rem',marginLeft:'4px'}}>한자 이름</span>
+                    <input placeholder="洪吉童 (선택)" value={form.chineseName} onChange={e=>set('chineseName',e.target.value)} onFocus={()=>setFocused('cn')} onBlur={()=>setFocused(null)} style={inp('cn')}/>
+                    <span style={{color:'rgba(167,139,250,.35)',fontSize:'.62rem',marginLeft:4}}>한자 이름</span>
                   </div>
                 </div>
-                {errors.name&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'4px'}}>이름을 입력해 주세요</p>}
               </div>
               <div>
                 <label style={lbl}>성별 *</label>
-                <div style={{display:'flex',gap:'8px'}}>
+                <div style={{display:'flex',gap:8}}>
                   {[{v:'male',l:'남성 ♂',c:'#60a5fa'},{v:'female',l:'여성 ♀',c:'#f472b6'}].map(g=>(
-                    <button key={g.v} onClick={()=>set('gender',g.v)} style={{flex:1,padding:'11px',borderRadius:'12px',fontSize:'0.84rem',fontWeight:500,cursor:'pointer',transition:'all .3s',border:form.gender===g.v?`1px solid ${g.c}`:'1px solid rgba(255,255,255,.08)',background:form.gender===g.v?`${g.c}18`:'rgba(255,255,255,.02)',color:form.gender===g.v?g.c:'rgba(167,139,250,.55)',boxShadow:form.gender===g.v?`0 0 16px ${g.c}33`:'none'}}>{g.l}</button>
+                    <button key={g.v} onClick={()=>set('gender',g.v)} style={{flex:1,padding:11,borderRadius:12,fontSize:'.84rem',fontWeight:500,cursor:'pointer',transition:'all .3s',border:form.gender===g.v?`1px solid ${g.c}`:'1px solid rgba(255,255,255,.08)',background:form.gender===g.v?`${g.c}18`:'rgba(255,255,255,.02)',color:form.gender===g.v?g.c:'rgba(167,139,250,.55)',boxShadow:form.gender===g.v?`0 0 16px ${g.c}33`:'none'}}>{g.l}</button>
                   ))}
                 </div>
-                {errors.gender&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'4px'}}>성별을 선택해 주세요</p>}
+                {errors.gender&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'.67rem',marginTop:4}}>성별을 선택해 주세요</p>}
               </div>
             </div>
 
-            {/* 생년월일 + 시간 */}
+            {/* 생년월일 + 시간 + 도시 */}
             <div style={sec}>
-              <div style={{marginBottom:'16px'}}>
+              <div style={{marginBottom:16}}>
                 <label style={lbl}>생년월일 *</label>
                 <input type="date" value={form.birthdate} onChange={e=>set('birthdate',e.target.value)} onFocus={()=>setFocused('bd')} onBlur={()=>setFocused(null)} style={{...inp('bd'),colorScheme:'dark'}}/>
-                {errors.birthdate&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'4px'}}>생년월일을 입력해 주세요</p>}
+                {errors.birthdate&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'.67rem',marginTop:4}}>생년월일을 입력해 주세요</p>}
               </div>
-              <div style={{marginBottom:'16px'}}>
+              <div style={{marginBottom:16}}>
                 <label style={lbl}>태어난 시간 *</label>
                 <div style={{position:'relative'}}>
-                  <select value={form.birthHour} onChange={e=>set('birthHour',e.target.value)} onFocus={()=>setFocused('bh')} onBlur={()=>setFocused(null)} style={{...inp('bh'),paddingRight:'36px',cursor:'pointer'}}>
+                  <select value={form.birthHour} onChange={e=>set('birthHour',e.target.value)} onFocus={()=>setFocused('bh')} onBlur={()=>setFocused(null)} style={{...inp('bh'),paddingRight:36,cursor:'pointer'}}>
                     <option value="">시간 선택</option>
-                    {HOURS.map(h=><option key={h} value={h}>{h}</option>)}
+                    {HOURS_LIST.map(h=><option key={h} value={h}>{h}</option>)}
                   </select>
-                  <svg style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(167,139,250,0.45)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(167,139,250,.45)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
-                {errors.birthHour&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'4px'}}>태어난 시간을 선택해 주세요</p>}
+                {errors.birthHour&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'.67rem',marginTop:4}}>태어난 시간을 선택해 주세요</p>}
               </div>
               <div>
-                <label style={lbl}>태어난 도시 <span style={{color:'rgba(167,139,250,0.4)',fontSize:'0.6rem',letterSpacing:'0.04em',textTransform:'none'}}>(선택)</span></label>
+                <label style={lbl}>태어난 도시 <span style={{color:'rgba(167,139,250,.4)',fontSize:'.6rem',textTransform:'none'}}>(선택)</span></label>
                 <div style={{position:'relative'}}>
-                  <select value={form.city} onChange={e=>set('city',e.target.value)} onFocus={()=>setFocused('ct')} onBlur={()=>setFocused(null)} style={{...inp('ct'),paddingRight:'36px',cursor:'pointer'}}>
+                  <select value={form.city} onChange={e=>set('city',e.target.value)} onFocus={()=>setFocused('ct')} onBlur={()=>setFocused(null)} style={{...inp('ct'),paddingRight:36,cursor:'pointer'}}>
                     {CITIES.map(c=>(
-                      <option key={c} value={CITY_DISABLED.includes(c)?'':c} disabled={CITY_DISABLED.includes(c)} style={{color:CITY_DISABLED.includes(c)?'rgba(167,139,250,0.4)':'#e2d9f3',fontWeight:CITY_DISABLED.includes(c)?600:'normal'}}>
-                        {c}
-                      </option>
+                      <option key={c} value={CITY_DISABLED.has(c)?'':c} disabled={CITY_DISABLED.has(c)} style={{color:CITY_DISABLED.has(c)?'rgba(167,139,250,.4)':'#e2d9f3',fontWeight:CITY_DISABLED.has(c)?600:'normal'}}>{c}</option>
                     ))}
                   </select>
-                  <svg style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(167,139,250,0.45)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                  <svg style={{position:'absolute',right:12,top:'50%',transform:'translateY(-50%)',pointerEvents:'none'}} width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="rgba(167,139,250,.45)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                 </div>
-                <p style={{color:'rgba(167,139,250,0.3)',fontSize:'0.62rem',marginTop:'4px'}}>✦ 출생 도시 정보는 더 정밀한 사주 분석에 활용됩니다.</p>
+                <p style={{color:'rgba(167,139,250,.3)',fontSize:'.62rem',marginTop:4}}>✦ 출생 도시는 더 정밀한 사주 분석에 활용됩니다.</p>
               </div>
             </div>
 
             {/* MBTI */}
             <div style={sec}>
               <label style={lbl}>MBTI 유형 *</label>
-              <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'6px'}}>
-                {MBTI.map(type=>(
-                  <button key={type} onClick={()=>set('mbti',type)} style={{padding:'9px 4px',borderRadius:'10px',fontSize:'0.76rem',fontWeight:700,letterSpacing:'0.05em',cursor:'pointer',transition:'all .2s',border:form.mbti===type?'1px solid rgba(167,139,250,.75)':'1px solid rgba(255,255,255,.07)',background:form.mbti===type?'linear-gradient(135deg,rgba(139,92,246,.3),rgba(99,102,241,.2))':'rgba(255,255,255,.025)',color:form.mbti===type?'#e2d9f3':'rgba(167,139,250,.45)',boxShadow:form.mbti===type?'0 0 10px rgba(139,92,246,.3)':'none'}}>
+              <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:6}}>
+                {MBTI_LIST.map(type=>(
+                  <button key={type} onClick={()=>set('mbti',type)} style={{padding:'9px 4px',borderRadius:10,fontSize:'.76rem',fontWeight:700,cursor:'pointer',transition:'all .2s',border:form.mbti===type?'1px solid rgba(167,139,250,.75)':'1px solid rgba(255,255,255,.07)',background:form.mbti===type?'linear-gradient(135deg,rgba(139,92,246,.3),rgba(99,102,241,.2))':'rgba(255,255,255,.025)',color:form.mbti===type?'#e2d9f3':'rgba(167,139,250,.45)',boxShadow:form.mbti===type?'0 0 10px rgba(139,92,246,.3)':'none'}}>
                     {type}
                   </button>
                 ))}
               </div>
-              {errors.mbti&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'6px'}}>MBTI를 선택해 주세요</p>}
+              {errors.mbti&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'.67rem',marginTop:6}}>MBTI를 선택해 주세요</p>}
             </div>
 
             {/* 고민 6개 */}
             <div style={sec}>
               <label style={lbl}>현재 가장 큰 고민 *</label>
-              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px'}}>
+              <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                 {CONCERNS.map(c=>(
-                  <button key={c.id} onClick={()=>set('concern',c.id)} onMouseEnter={()=>setHoverC(c.id)} onMouseLeave={()=>setHoverC(null)}
-                    style={{padding:'14px 12px',borderRadius:'14px',textAlign:'left',cursor:'pointer',transition:'all .3s',border:form.concern===c.id?'1px solid rgba(167,139,250,.55)':hoverC===c.id?'1px solid rgba(167,139,250,.18)':'1px solid rgba(255,255,255,.05)',background:form.concern===c.id?'linear-gradient(135deg,rgba(139,92,246,.2),rgba(99,102,241,.13))':hoverC===c.id?'rgba(139,92,246,.05)':'rgba(255,255,255,.015)',boxShadow:form.concern===c.id?'0 0 20px rgba(139,92,246,.22)':'none',transform:hoverC===c.id&&form.concern!==c.id?'translateY(-2px)':'none'}}>
-                    <div style={{fontSize:'1.25rem',marginBottom:'4px'}}>{c.icon}</div>
-                    <div style={{color:form.concern===c.id?'#e2d9f3':'rgba(167,139,250,.65)',fontWeight:600,fontSize:'0.8rem',marginBottom:'2px'}}>{c.label}</div>
-                    <div style={{color:'rgba(147,197,253,.4)',fontSize:'0.65rem'}}>{c.desc}</div>
+                  <button key={c.id} onClick={()=>set('concern',c.id)} onMouseEnter={()=>setHoverC(c.id)} onMouseLeave={()=>setHoverC(null)} style={{padding:'14px 12px',borderRadius:14,textAlign:'left',cursor:'pointer',transition:'all .3s',border:form.concern===c.id?'1px solid rgba(167,139,250,.55)':hoverC===c.id?'1px solid rgba(167,139,250,.18)':'1px solid rgba(255,255,255,.05)',background:form.concern===c.id?'linear-gradient(135deg,rgba(139,92,246,.2),rgba(99,102,241,.13))':hoverC===c.id?'rgba(139,92,246,.05)':'rgba(255,255,255,.015)',boxShadow:form.concern===c.id?'0 0 20px rgba(139,92,246,.22)':'none',transform:hoverC===c.id&&form.concern!==c.id?'translateY(-2px)':'none'}}>
+                    <div style={{fontSize:'1.25rem',marginBottom:4}}>{c.icon}</div>
+                    <div style={{color:form.concern===c.id?'#e2d9f3':'rgba(167,139,250,.65)',fontWeight:600,fontSize:'.8rem',marginBottom:2}}>{c.label}</div>
+                    <div style={{color:'rgba(147,197,253,.4)',fontSize:'.65rem'}}>{c.desc}</div>
                   </button>
                 ))}
               </div>
-              {errors.concern&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'0.67rem',marginTop:'6px'}}>고민 유형을 선택해 주세요</p>}
+              {errors.concern&&<p style={{color:'rgba(248,113,113,.8)',fontSize:'.67rem',marginTop:6}}>고민 유형을 선택해 주세요</p>}
             </div>
 
-            {/* 연락처 */}
+            {/* 연락처 + 개인정보 */}
             <div style={sec}>
               <label style={lbl}>연락처 정보 (선택)</label>
-              <div style={{marginBottom:'10px'}}>
+              <div style={{marginBottom:10}}>
                 <input type="email" placeholder="이메일 (결과 수신용)" value={form.email} onChange={e=>set('email',e.target.value)} onFocus={()=>setFocused('em')} onBlur={()=>setFocused(null)} style={inp('em')}/>
               </div>
               <input type="tel" placeholder="전화번호 (선택)" value={form.phone} onChange={e=>set('phone',e.target.value)} onFocus={()=>setFocused('ph')} onBlur={()=>setFocused(null)} style={inp('ph')}/>
 
-              {/* 개인정보 동의 — 전면 개편 */}
-              <label style={{display:'flex',alignItems:'flex-start',gap:'10px',marginTop:'14px',cursor:'pointer',padding:'12px 14px',borderRadius:'12px',background:'rgba(139,92,246,0.05)',border:`1px solid ${form.agree?'rgba(167,139,250,0.45)':'rgba(255,255,255,0.08)'}`}} onClick={()=>set('agree',!form.agree)}>
-                <div style={{width:'18px',height:'18px',borderRadius:'5px',border:`2px solid ${form.agree?'#a78bfa':'rgba(167,139,250,0.3)'}`,background:form.agree?'rgba(139,92,246,0.35)':'transparent',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:'2px',transition:'all .2s',cursor:'pointer'}}>
-                  {form.agree&&<span style={{color:'#a78bfa',fontSize:'0.72rem',lineHeight:1,fontWeight:700}}>✓</span>}
+              {/* 개인정보 동의 */}
+              <label onClick={()=>set('agree',!form.agree)} style={{display:'flex',alignItems:'flex-start',gap:10,marginTop:14,cursor:'pointer',padding:'12px 14px',borderRadius:12,background:'rgba(139,92,246,.05)',border:`1px solid ${form.agree?'rgba(167,139,250,.45)':'rgba(255,255,255,.08)'}`}}>
+                <div style={{width:18,height:18,borderRadius:5,border:`2px solid ${form.agree?'#a78bfa':'rgba(167,139,250,.3)'}`,background:form.agree?'rgba(139,92,246,.35)':'transparent',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:2,transition:'all .2s',cursor:'pointer'}}>
+                  {form.agree&&<span style={{color:'#a78bfa',fontSize:'.72rem',fontWeight:700}}>✓</span>}
                 </div>
-                <span style={{color:'rgba(167,139,250,0.7)',fontSize:'0.72rem',lineHeight:'1.75'}}>
-                  <strong style={{color:form.agree?'#c4b5fd':'rgba(167,139,250,0.85)',fontSize:'0.76rem'}}>개인정보 수집 및 이용에 동의합니다</strong>
-                  <span style={{color:'rgba(167,139,250,0.45)',marginLeft:'4px'}}>(선택)</span><br/>
-                  <span style={{fontSize:'0.65rem',color:'rgba(167,139,250,0.4)',lineHeight:'1.8'}}>
-                    수집 항목: 성별, 생년월일, MBTI, 고민내용<br/>
-                    목적: 개인 맞춤형 사주 및 심리 분석 결과 제공<br/>
-                    보유 기간: 분석 완료 후 즉시 파기 원칙
+                <span style={{color:'rgba(167,139,250,.7)',fontSize:'.72rem',lineHeight:'1.75'}}>
+                  <strong style={{color:form.agree?'#c4b5fd':'rgba(167,139,250,.85)',fontSize:'.76rem'}}>개인정보 수집 및 이용에 동의합니다</strong>
+                  <span style={{color:'rgba(167,139,250,.45)',marginLeft:4}}>(선택)</span><br/>
+                  <span style={{fontSize:'.64rem',color:'rgba(167,139,250,.4)',lineHeight:'1.8'}}>
+                    수집: 성별, 생년월일, MBTI, 고민내용<br/>
+                    목적: 맞춤형 사주 분석 결과 제공<br/>
+                    보유: 분석 완료 후 즉시 파기 원칙
                   </span>
-                  {form.agree&&(
-                    <span style={{display:'block',marginTop:'6px',color:'rgba(74,222,128,0.75)',fontSize:'0.64rem'}}>
-                      ✓ 동의하셨습니다. 분석 결과가 안전하게 저장됩니다.
-                    </span>
-                  )}
-                  {!form.agree&&(
-                    <span style={{display:'block',marginTop:'6px',color:'rgba(167,139,250,0.35)',fontSize:'0.62rem'}}>
-                      미체크 시 분석은 정상 진행되나 결과가 저장되지 않습니다.
-                    </span>
-                  )}
+                  {form.agree&&<span style={{display:'block',marginTop:5,color:'rgba(74,222,128,.75)',fontSize:'.63rem'}}>✓ 동의하셨습니다. 분석 결과가 안전하게 저장됩니다.</span>}
+                  {!form.agree&&<span style={{display:'block',marginTop:5,color:'rgba(167,139,250,.35)',fontSize:'.62rem'}}>미체크 시 분석은 정상 진행되나 결과가 저장되지 않습니다.</span>}
                 </span>
               </label>
             </div>
 
-            {/* 🔒 아우름사주의 보안 약속 */}
-            <div style={{borderRadius:'16px',padding:'16px 18px',marginBottom:'16px',background:'linear-gradient(135deg,rgba(16,30,60,0.85),rgba(10,20,50,0.8))',border:'1px solid rgba(96,165,250,0.25)',boxShadow:'0 0 20px rgba(59,130,246,0.07)'}}>
-              <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'12px'}}>
+            {/* 🔒 보안 약속 */}
+            <div style={{borderRadius:16,padding:'16px 18px',marginBottom:16,background:'linear-gradient(135deg,rgba(16,30,60,.85),rgba(10,20,50,.8))',border:'1px solid rgba(96,165,250,.25)',boxShadow:'0 0 20px rgba(59,130,246,.07)'}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:12}}>
                 <span style={{fontSize:'1.05rem'}}>🔒</span>
-                <span style={{color:'#93c5fd',fontSize:'0.76rem',fontWeight:700,letterSpacing:'0.08em'}}>아우름사주의 보안 약속</span>
+                <span style={{color:'#93c5fd',fontSize:'.76rem',fontWeight:700,letterSpacing:'.08em'}}>아우름사주의 보안 약속</span>
               </div>
-              <div style={{display:'flex',flexDirection:'column',gap:'9px'}}>
+              <div style={{display:'flex',flexDirection:'column',gap:9}}>
                 {[
                   {icon:'🕵️',title:'익명성 보장',desc:'성함이나 연락처를 수집하지 않아 개인을 특정할 수 없습니다.'},
                   {icon:'🚫',title:'목적 외 사용 금지',desc:"입력하신 정보는 오직 '사주 분석'에만 사용되며 외부 유출이 절대 없습니다."},
                   {icon:'🗑️',title:'데이터 즉시 파기',desc:'무료 테스트 기간 중 수집된 정보는 결과 전달 후 안전하게 삭제됩니다.'},
                 ].map((item,i)=>(
-                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:'10px'}}>
-                    <span style={{fontSize:'0.9rem',flexShrink:0,marginTop:'1px'}}>{item.icon}</span>
-                    <p style={{fontSize:'0.7rem',lineHeight:'1.75',color:'rgba(191,219,254,0.7)'}}>
-                      <strong style={{color:'rgba(147,197,253,0.9)',fontWeight:600}}>{item.title}:</strong>{' '}{item.desc}
+                  <div key={i} style={{display:'flex',alignItems:'flex-start',gap:10}}>
+                    <span style={{fontSize:'.9rem',flexShrink:0,marginTop:1}}>{item.icon}</span>
+                    <p style={{fontSize:'.7rem',lineHeight:'1.75',color:'rgba(191,219,254,.7)'}}>
+                      <strong style={{color:'rgba(147,197,253,.9)',fontWeight:600}}>{item.title}:</strong>{' '}{item.desc}
                     </p>
                   </div>
                 ))}
@@ -1238,7 +962,7 @@ function App(){
             </div>
 
             {/* 제출 버튼 */}
-            <button onClick={handleSubmit} className="neo-glow" style={{width:'100%',padding:'18px',borderRadius:'16px',fontSize:'1.05rem',fontWeight:600,fontFamily:"'Noto Serif KR',serif",letterSpacing:'0.14em',color:'#fff',border:'1px solid rgba(255,255,255,.12)',cursor:'pointer',background:'linear-gradient(135deg,#7c3aed,#4f46e5 40%,#2563eb 80%,#7c3aed)',backgroundSize:'200% auto',display:'flex',alignItems:'center',justifyContent:'center',gap:'10px',marginBottom:'32px'}}>
+            <button onClick={handleSubmit} className="neo-glow" style={{width:'100%',padding:18,borderRadius:16,fontSize:'1.05rem',fontWeight:600,fontFamily:"'Noto Serif KR',serif",letterSpacing:'.14em',color:'#fff',border:'1px solid rgba(255,255,255,.12)',cursor:'pointer',background:'linear-gradient(135deg,#7c3aed,#4f46e5 40%,#2563eb 80%,#7c3aed)',backgroundSize:'200% auto',display:'flex',alignItems:'center',justifyContent:'center',gap:10,marginBottom:32}}>
               <span style={{fontSize:'1.1rem'}}>✨</span>
               나의 사주 분석하기
               <span style={{fontSize:'1.1rem'}}>✨</span>
@@ -1249,38 +973,34 @@ function App(){
         {/* ─── 결과 ─── */}
         {report&&(
           <>
-            <div ref={resultAnchor} style={{height:'1px'}}/>
-            <div style={{display:'flex',alignItems:'center',gap:'12px',margin:'4px 0 20px'}}>
-              <div style={{flex:1,height:'1px',background:'linear-gradient(to right,transparent,rgba(167,139,250,.4))'}}/>
-              <div style={{display:'flex',alignItems:'center',gap:'6px',padding:'7px 16px',borderRadius:'99px',background:'rgba(139,92,246,.15)',border:'1px solid rgba(167,139,250,.25)'}}>
-                <span style={{color:'#fbbf24',fontSize:'0.7rem'}}>★</span>
-                <span style={{color:'#a78bfa',fontSize:'0.65rem',letterSpacing:'0.15em',fontWeight:700}}>ANALYSIS REPORT 2026</span>
-                <span style={{color:'#fbbf24',fontSize:'0.7rem'}}>★</span>
+            <div ref={resultAnchor} style={{height:1}}/>
+            <div style={{display:'flex',alignItems:'center',gap:12,margin:'4px 0 20px'}}>
+              <div style={{flex:1,height:1,background:'linear-gradient(to right,transparent,rgba(167,139,250,.4))'}}/>
+              <div style={{display:'flex',alignItems:'center',gap:6,padding:'7px 16px',borderRadius:99,background:'rgba(139,92,246,.15)',border:'1px solid rgba(167,139,250,.25)'}}>
+                <span style={{color:'#fbbf24',fontSize:'.7rem'}}>★</span>
+                <span style={{color:'#a78bfa',fontSize:'.65rem',letterSpacing:'.15em',fontWeight:700}}>ANALYSIS REPORT 2026</span>
+                <span style={{color:'#fbbf24',fontSize:'.7rem'}}>★</span>
               </div>
-              <div style={{flex:1,height:'1px',background:'linear-gradient(to left,transparent,rgba(167,139,250,.4))'}}/>
+              <div style={{flex:1,height:1,background:'linear-gradient(to left,transparent,rgba(167,139,250,.4))'}}/>
             </div>
-            <ReportSection
-              data={report}
-              form={form}
-              onShare={()=>setShareOpen(true)}
-              onLotto={()=>setLottoOpen(true)}
-              reportRef={reportRef}
-            />
-            <button onClick={handleReset} style={{width:'100%',padding:'14px',borderRadius:'14px',background:'rgba(255,255,255,.025)',border:'1px solid rgba(167,139,250,.18)',color:'rgba(167,139,250,.65)',fontSize:'0.8rem',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:'6px',marginBottom:'20px',letterSpacing:'0.06em'}}>
+            <ReportSection data={report} form={form} onShare={()=>setShareOpen(true)}/>
+            <button onClick={handleReset} style={{width:'100%',padding:14,borderRadius:14,background:'rgba(255,255,255,.025)',border:'1px solid rgba(167,139,250,.18)',color:'rgba(167,139,250,.65)',fontSize:'.8rem',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,marginBottom:20}}>
               ↺ 처음부터 다시 분석하기
             </button>
           </>
         )}
 
         {/* ─── 푸터 ─── */}
-        <div style={{textAlign:'center',paddingBottom:'20px',borderTop:'1px solid rgba(255,255,255,0.04)',paddingTop:'16px'}}>
-          <p style={{color:'rgba(167,139,250,.18)',fontSize:'0.6rem',letterSpacing:'0.08em'}}>© 2026 MY SAJU MASTER · Powered by Cosmic Intelligence<br/>All rights reserved · mysajumaster.com</p>
+        <div style={{textAlign:'center',paddingTop:16,paddingBottom:20,borderTop:'1px solid rgba(255,255,255,.04)'}}>
+          <p style={{color:'rgba(167,139,250,.18)',fontSize:'.6rem',letterSpacing:'.08em'}}>
+            © 2026 아우름사주 × AI SAJU MASTER · Powered by Gemini AI & 명리학<br/>
+            All rights reserved · mysajumaster.com
+          </p>
         </div>
       </div>
 
       {analyzing&&<Analyzing/>}
       {shareOpen&&report&&<ShareModal report={report} form={form} onClose={()=>setShareOpen(false)}/>}
-      {lottoOpen&&report&&<LottoCopyModal lotto={report.lotto} onClose={()=>setLottoOpen(false)}/>}
     </div>
   );
 }
