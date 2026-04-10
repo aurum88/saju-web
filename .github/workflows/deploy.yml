@@ -17,8 +17,8 @@ jobs:
 
       - name: Replace API Key in HTML
         run: |
-          # 아주 명확하게 단어 대 단어로만 치환합니다.
-          sed -i "s/YOUR_API_KEY_PLACEHOLDER/${{ secrets.GEMINI_API_KEY }}/g" index.html
+          # 코드에 적힌 'GEMINI_API_KEY_PLACEHOLDER'를 찾아 진짜 키로 바꿉니다.
+          sed -i "s|GEMINI_API_KEY_PLACEHOLDER|${{ secrets.GEMINI_API_KEY }}|g" index.html
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
