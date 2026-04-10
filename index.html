@@ -101,12 +101,19 @@ const WEBHOOK="https://hook.us1.make.com/c7gwi6t5kgu2rfwn37skdwptr71hyyxx";
 const CONCERN_KR={wealth:"재물·금전",love:"애정·관계",career:"커리어·직업",health:"건강·활력",mentor:"귀인·인복",study:"학업·시험운"};
 
 /* ════════════════════════════════════════════
-   [최종 수정] 404 에러 박멸용 통합 설정
+   [끝장판] 404 에러 박멸을 위한 모델 변경 주소
 ════════════════════════════════════════════ */
-// 1. 모델명 뒤에 버전을 명시하고, 주소 전체를 하나로 합쳤습니다.
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=AIzaSyChP6tjdLWtii4lUArZ77G6kKi9SInfpE8";
-/* ════════════════════════════════════════════ */
 
+// 1. 모델을 gemini-pro로 변경 (flash가 404 날 때의 확실한 대안)
+const MODEL_NAME = "gemini-pro"; 
+const API_VERSION = "v1";
+
+// 2. 반드시 새로 발급받은 '새 API 키'를 아래에 넣으세요!
+const NEW_API_KEY = "AIzaSyBqTjHIYS65laYL1FdB9FL8XJgd3WiJvBM";
+
+const GEMINI_URL = `https://generativelanguage.googleapis.com/${API_VERSION}/models/${MODEL_NAME}:generateContent?key=${NEW_API_KEY}`;
+
+/* ════════════════════════════════════════════ */
 
 /* ── SEED RANDOM ── */
 function srand(seed){let s=seed;return()=>{s=(s*9301+49297)%233280;return s/233280;};}
