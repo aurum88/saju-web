@@ -17,9 +17,8 @@ jobs:
 
       - name: Replace API Key in HTML
         run: |
-          # index.html 파일 안에 있는 'YOUR_API_KEY_PLACEHOLDER'라는 글자를 
-          # 우리가 금고(Secrets)에 저장한 실제 키로 몰래 바꿔치기합니다.
-          sed -i "s|'YOUR_API_KEY_PLACEHOLDER'|'${{ secrets.GEMINI_API_KEY }}'|g" index.html
+          # 아주 명확하게 단어 대 단어로만 치환합니다.
+          sed -i "s/YOUR_API_KEY_PLACEHOLDER/${{ secrets.GEMINI_API_KEY }}/g" index.html
 
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
