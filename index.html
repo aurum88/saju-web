@@ -87,7 +87,7 @@ const {useState,useEffect,useRef,useCallback}=React;
    ★ 절대 이 자리에 실제 키를 직접 입력하지 마세요.
 ══════════════════════════════════════════════════ */
 const API_KEY='YOUR_API_KEY_PLACEHOLDER';
-const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+API_KEY;
+
 
 /* ── 공통 상수 ── */
 const MBTI_LIST=["INTJ","INTP","ENTJ","ENTP","INFJ","INFP","ENFJ","ENFP","ISTJ","ISFJ","ESTJ","ESFJ","ISTP","ISFP","ESTP","ESFP"];
@@ -228,6 +228,9 @@ function genLocalReport(f){
 /* ── Gemini 지수 백오프 ── */
 async function fetchWithBackoff(body,maxRetries=3){
   let lastErr;
+const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+API_KEY;
+
+  
   for(let i=0;i<maxRetries;i++){
     try{
       const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
