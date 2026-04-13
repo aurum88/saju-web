@@ -226,29 +226,34 @@ function genLocalReport(f){
 }
 
 /* ── Gemini 지수 백오프 ── */
-async function fetchWithBackoff(body,maxRetries=3){
+async function fetchWithBackoff(body, maxRetries = 3) {
   let lastErr;
-const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='+API_KEY;
-
   
-  for(let i=0;i<maxRetries;i++){
-    try{
-      const res=await fetch(GEMINI_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-      if(res.status===429){
-        const w=Math.pow(2,i)*1500+Math.random()*500;
-        console.warn('[429] '+(i+1)+'/'+maxRetries+' → '+Math.round(w/1000)+'초 대기');
-        await new Promise(r=>setTimeout(r,w));
-        lastErr=new Error('HTTP_429');continue;
+  // [수정] 모델명 바로 뒤에 :generateContent가 오고, 그 뒤에 ?key= 가 와야 합니다.
+  const GEMINI_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=' + API_KEY;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const res = await fetch(GEMINI_URL, { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(body) 
+      });
+      
+      if (res.status === 429) {
+        const w = Math.pow(2, i) * 1500 + Math.random() * 500;
+        console.warn('[429] ' + (i + 1) + '/' + maxRetries + ' → ' + Math.round(w / 1000) + '초 대기');
+        await new Promise(r => setTimeout(r, w));
+        lastErr = new Error('HTTP_429'); continue;
       }
       return res;
-    }catch(e){
-      lastErr=e;
-      if(i<maxRetries-1)await new Promise(r=>setTimeout(r,Math.pow(2,i)*1000));
+    } catch (e) {
+      lastErr = e;
+      if (i < maxRetries - 1) await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
     }
   }
-  throw lastErr||new Error('NETWORK_ERROR');
+  throw lastErr || new Error('NETWORK_ERROR');
 }
-
 /* ── Gemini API 호출 ── */
 async function callGemini(f,local){
   const sj=local.sj||{};
