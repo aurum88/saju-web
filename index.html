@@ -228,7 +228,7 @@ function genLocalReport(f){
 /* ── Gemini 지수 백오프 ── */
 async function fetchWithBackoff(body,maxRetries=3){
   let lastErr;
-const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+API_KEY;
+const GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key='+API_KEY;
 
   
   for(let i=0;i<maxRetries;i++){
