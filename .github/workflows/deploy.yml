@@ -1,0 +1,23 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ] # 메인 브랜치에 코드가 올라올 때 실행
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Replace API Key
+        run: |
+          # index.html의 가짜 문구를 금고 속 진짜 키로 교체
+          sed -i "s/YOUR_API_KEY_PLACEHOLDER/${{ secrets.GEMINI_API_KEY }}/g" index.html
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: .        # 현재 폴더 전체를 배포
+          branch: gh-pages # 결과물은 gh-pages 브랜치에 저장
