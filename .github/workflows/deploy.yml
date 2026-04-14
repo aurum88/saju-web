@@ -1,0 +1,53 @@
+name: Deploy Saju Web to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main          # main 브랜치에 push할 때마다 자동 배포
+
+permissions:
+  contents: read
+  pages:    write
+  id-token: write
+
+concurrency:
+  group:  "pages"
+  cancel-in-progress: true   # 동시 배포 방지
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      # ── 1. 소스 체크아웃 ──────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. API 키 치환 ────────────────────────────────────
+      #    GitHub Secrets에 저장된 GEMINI_API_KEY 값으로
+      #    index.html 안의 플레이스홀더를 교체합니다.
+      #    (| 구분자를 사용해 키 안의 특수문자 처리)
+      - name: Inject Gemini API Key
+        run: |
+          sed -i "s|YOUR_API_KEY_PLACEHOLDER|${{ secrets.GEMINI_API_KEY }}|g" index.html
+          echo "✅ API Key 치환 완료"
+          # 실제 키가 로그에 노출되지 않도록 결과를 직접 출력하지 않음
+          grep -c "YOUR_API_KEY_PLACEHOLDER" index.html && echo "❌ 치환 실패!" || echo "✅ 치환 검증 통과"
+
+      # ── 3. GitHub Pages 설정 ─────────────────────────────
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      # ── 4. 배포 파일 업로드 ───────────────────────────────
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'      # 루트 디렉토리 전체 업로드
+
+      # ── 5. GitHub Pages 배포 ─────────────────────────────
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
