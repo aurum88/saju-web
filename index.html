@@ -3,108 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>아우름 사주 - AI 명리 분석</title>
+    <title>아우름 AI 사주 - 실시간 분석</title>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&display=swap');
-        body { font-family: 'Noto Serif KR', serif; }
-        .loading-spinner { border-top-color: #4f46e5; animation: spinner 1.5s linear infinite; }
-        @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-stone-50 text-stone-900">
     <div id="root"></div>
 
     <script type="text/babel">
         const { useState } = React;
 
-        // ★★★ 여기에 AI Studio에서 받은 실제 API 키를 넣어주세요 ★★★
-        const API_KEY = 'AIzaSyCQuE1FGtG7KsoUmZZrHzrPUZIXxQ3uQkU'; 
+        // ★ 절대 건드리지 마세요! 깃허브 로봇이 배포할 때만 실제 키로 바꿔줍니다.
+        const API_KEY = 'YOUR_API_KEY_PLACEHOLDER';
 
-        function App() {
+        function SajuApp() {
             const [name, setName] = useState('');
-            const [birthDate, setBirthDate] = useState('');
+            const [birth, setBirth] = useState('');
             const [result, setResult] = useState('');
             const [loading, setLoading] = useState(false);
 
-            const callGemini = async () => {
-                if (!name || !birthDate) return alert("이름과 생년월일을 입력해주세요.");
+            const analyzeSaju = async () => {
+                if (!name || !birth) return alert("성함과 생년월일을 알려주세요.");
                 setLoading(true);
                 setResult("");
 
-                // [수정] 가장 호환성이 높은 주소와 모델명으로 고정했습니다.
+                // 표준 v1beta 주소와 모델명 사용
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
-
-                const prompt = `당신은 40년 경력의 사주명리학 대가입니다. 이름: ${name}, 생년월일: ${birthDate} 정보를 바탕으로 1. 타고난 기운(오행) 2. 올해의 총운 3. 주의할 점을 따뜻하고 전문적인 말투로 분석해주세요.`;
 
                 try {
                     const response = await fetch(url, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
+                            contents: [{
+                                parts: [{ text: `${name}님(생년월일: ${birth})의 올해 운세를 명리학적으로 아주 자세히 분석해줘.` }]
+                            }]
                         })
                     });
 
                     const data = await response.json();
-
                     if (response.ok) {
                         setResult(data.candidates[0].content.parts[0].text);
                     } else {
-                        // 에러가 나면 어떤 주소로 보냈는지 확인할 수 있게 상세 정보를 띄웁니다.
-                        setResult(`분석 실패: ${data.error.message}\n(주소 체계 문제일 수 있으니 키를 다시 확인해 주세요.)`);
+                        setResult(`분석 실패: ${data.error.message}`);
                     }
-                } catch (error) {
-                    setResult("서버 연결 실패. 인터넷 연결이나 API 키 설정을 확인해 주세요.");
+                } catch (err) {
+                    setResult("서버와 연결이 원활하지 않습니다.");
                 } finally {
                     setLoading(false);
                 }
             };
 
             return (
-                <div class="max-w-2xl mx-auto p-6 min-h-screen">
-                    <header class="text-center py-10">
-                        <h1 class="text-3xl font-bold text-indigo-900">아우름 AI 사주 분석</h1>
-                        <p class="text-slate-600 mt-2">대전 아우름에서 전하는 따뜻한 운명 상담</p>
-                    </header>
-
-                    <main class="bg-white rounded-2xl shadow-xl p-8">
-                        <div class="space-y-6">
-                            <div>
-                                <label class="block text-sm font-bold mb-2">이름</label>
-                                <input type="text" class="w-full p-3 border rounded-lg" placeholder="성함을 입력하세요" value={name} onChange={(e)=>setName(e.target.value)} />
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold mb-2">생년월일 (시간 포함)</label>
-                                <input type="text" class="w-full p-3 border rounded-lg" placeholder="예: 1980년 5월 10일 오전 10시" value={birthDate} onChange={(e)=>setBirthDate(e.target.value)} />
-                            </div>
-                            <button onClick={callGemini} disabled={loading} class="w-full bg-indigo-900 text-white font-bold py-4 rounded-xl hover:bg-indigo-800 disabled:bg-slate-400">
-                                {loading ? "천기를 읽는 중..." : "사주 분석 시작하기"}
+                <div className="max-w-md mx-auto min-h-screen flex flex-col justify-center p-6">
+                    <div className="bg-white rounded-3xl shadow-2xl p-8 border border-stone-200">
+                        <h1 className="text-3xl font-serif font-bold text-center text-stone-800 mb-2">아우름 사주</h1>
+                        <p className="text-center text-stone-500 mb-8 italic">AI가 읽어주는 당신의 천기</p>
+                        
+                        <div className="space-y-4">
+                            <input className="w-full p-4 bg-stone-50 border-none rounded-2xl focus:ring-2 focus:ring-stone-300 transition-all"
+                                placeholder="성함" value={name} onChange={e=>setName(e.target.value)} />
+                            <input className="w-full p-4 bg-stone-50 border-none rounded-2xl focus:ring-2 focus:ring-stone-300 transition-all"
+                                placeholder="생년월일 (예: 1985.05.20)" value={birth} onChange={e=>setBirth(e.target.value)} />
+                            <button onClick={analyzeSaju} disabled={loading}
+                                className="w-full bg-stone-800 text-white p-4 rounded-2xl font-bold hover:bg-stone-700 transition-colors disabled:bg-stone-300">
+                                {loading ? "천기를 읽는 중..." : "운세 분석하기"}
                             </button>
                         </div>
 
                         {result && (
-                            <div class="mt-10 p-6 bg-indigo-50 rounded-xl border border-indigo-100 text-slate-800 leading-relaxed whitespace-pre-wrap">
-                                <h3 class="text-lg font-bold text-indigo-900 mb-4">분석 결과</h3>
+                            <div className="mt-8 p-6 bg-stone-50 rounded-2xl border border-stone-100 text-stone-700 leading-relaxed whitespace-pre-wrap animate-fade-in">
+                                <h2 className="font-bold text-stone-800 mb-4">📜 분석 결과</h2>
                                 {result}
                             </div>
                         )}
-                        
-                        {loading && (
-                            <div class="flex justify-center py-10">
-                                <div class="loading-spinner w-10 h-10 border-4 border-slate-200 rounded-full"></div>
-                            </div>
-                        )}
-                    </main>
+                    </div>
                 </div>
             );
         }
 
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        root.render(<SajuApp />);
     </script>
 </body>
 </html>
