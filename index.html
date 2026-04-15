@@ -284,7 +284,7 @@ async function callGroq(f,local){
   ];
 
   const requestBody={
-    model:'gemma-7b-it',
+    model:'llama-3.1-8b-instant',
     messages:[
       {role:'system',content:systemMsg},
       {role:'user',content:userLines.join('\n')},
