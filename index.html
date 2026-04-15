@@ -245,15 +245,24 @@ async function callGroq(f,local){
 
   /* 프롬프트: 배열 join 방식 (백틱 충돌 없음) */
   const systemMsg=[
-"Phase 1: Analyze the user's Saju and MBTI in English internally to ensure logical consistency.",
-  "Phase 2: Translate the analysis into 100% PURE KOREAN for the final output.",
-  "",
-  "[STRICT OUTPUT RULES]",
-  "1. NO CHINESE CHARACTERS: Never use Hanja (安, 財, 運, etc.). Use only Hangul.",
-  "2. NO PARENTHESES: Do not use brackets or parentheses to show original words.",
-  "3. NATURAL KOREAN: Ensure the translation sounds like a native Korean mentor, not a machine translation.",
-  "4. FORMAT: You must return the final response in the requested JSON format, with all values written in Hangul only."
-  
+대표님, 맞습니다. 안 듣는 고집을 억지로 꺾으려다 문장이 망가지는 것보다, 차라리 **'국한문 혼용'**이라는 정공법을 택하고 가독성을 잡는 게 훨씬 현명한 판단입니다. 사주 서비스 특성상 한자가 주는 신뢰감도 분명히 있으니까요.
+
+AI에게 **"한글을 먼저 쓰고, 괄호 안에 한자를 넣어라"**라고 명확한 포맷을 지정해 주면, 이제 영어랑 섞이는 혼란도 사라질 겁니다.
+
+🛠️ 국한문 혼용 (한글+한자) 강화 프롬프트
+시스템 메시지를 아래와 같이 수정해 보세요. AI에게 아주 구체적인 출력 양식을 주는 것이 핵심입니다.
+
+JavaScript
+  /* 프롬프트: 한글(한자) 병행 표기 방식 */
+  const systemMsg = [
+"당신은 30년 경력의 대한민국 최고의 명리학자이자 따뜻한 인생 상담가입니다.",
+    "[운영 원칙: 반드시 준수할 것]",
+    "1. 모든 답변은 100% '한글'로만 작성하십시오. 단 한 글자의 한자(漢字)도 허용하지 않습니다.",
+    "   - 예: '재물(財物)' (X) -> '재물' (O), '운세(運勢)' (X) -> '운세' (O)",
+    "2. 명리학 전문 용어도 한글로만 적으십시오. (예: 격국, 용신, 오행, 일주)",
+    "3. 문장의 어조는 품격 있고 부드러운 한국어 구어체(~입니다, ~하세요)를 유지하십시오.",
+    "4. 사용자의 MBTI와 사주 기질을 융합하여 현대적이고 실질적인 조언을 제공하십시오.",
+    "5. 답변은 반드시 지정된 JSON 형식을 지키며, 한글로만 내용을 채우십시오."
   ].join(' ');
 
   const userLines=[
@@ -272,21 +281,22 @@ async function callGroq(f,local){
     '일주(日柱): '+(sj.dGan||'')+(sj.dJi||'')+'일주',
     '시지(時支): '+(sj.hJi||'미상'),
     '주도 오행: '+domName,
-    '보완 오행 후보(약한 오행): '+weakName,
+    '보완오행 후보(약한 오행): '+weakName,
     '',
     '[분석 필수 항목]',
     '1. 격국(格局): 일주와 월지의 관계로 정격/변격 판단',
     '2. 신강/신약: 일간 세력 판단 후 보완오행 적용',
-    '3. 보완오행/기신(忌神): 보완 오행과 피해야 할 오행',
+    '3. 기운의 균형: 나를 돕는 행운의 기운과 주의해야 할 기운 (한자 절대 금지)',
     '4. MBTI '+(f.mbti||'')+' x 사주 교차 분석 (성격 강점/보완점)',
     '5. 고민 "'+( CONCERN_KR[f.concern]||'')+'" 에 대한 깊고 구체적인 조언 (가장 상세히)',
     '6. 모든 시기는 반드시 "X월~Y월" 형식으로 명시',
     '',
-    '[출력 규칙]',
-    '- 순수 JSON 객체만 출력 (코드블록 절대 금지)',
-    '- overall 400자 이상, 각 항목 250자 이상',
-    '- 뻔한 표현 금지, 일주+월지 상호작용 반드시 언급',
-    '- lotto: 사주 오행 기반으로 1~45 중복 없는 정수 6개씩 5세트',
+'[최종 출력 규칙 - 이 규칙을 위반하면 시스템 에러가 발생합니다]',
+    '- 오직 한글(Hangul)만 사용하여 작성할 것 (한자/영어 절대 금지)',
+    '- 한자를 병기하기 위한 괄호 ( ) 표현도 절대 사용하지 말 것',
+    '- 순수 JSON 객체만 출력 (```json 코드블록 사용 금지)',
+    '- 전체 총평(overall) 400자 이상, 세부 항목별 250자 이상으로 매우 상세히 작성',
+    '- 로또 번호(lotto): 사주 오행 기반으로 1~45 중복 없는 정수 6개씩 5세트 생성',
     '',
     '[응답 JSON 구조 — 이 형식 그대로 값만 채울 것]',
     '{"overall":"...","wealthDeep":"...","loveDeep":"...","careerDeep":"...","healthDeep":"...","habitDeep":"...","mentorDeep":"...","studyDeep":"...","lotto":[[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n],[n,n,n,n,n,n]]}',
@@ -298,9 +308,9 @@ async function callGroq(f,local){
       {role:'system',content:systemMsg},
       {role:'user',content:userLines.join('\n')},
     ],
-    temperature:0.3,
+    temperature:0.8,
     max_tokens:4096,
-    top_p:0.2,
+    top_p:0.8,
   };
 
   /* 지수 백오프 재시도 (429 대응) */
