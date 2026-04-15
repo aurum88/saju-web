@@ -67,6 +67,12 @@ select{-webkit-appearance:none}
 
 /* ── 인쇄 ── */
 @media print{.no-print{display:none!important}}
+
+  /* 취소선(del, s, strike)이 생기는 것을 방지 */
+del, s, strike {
+    text-decoration: none !important;
+}
+  
 </style>
 </head>
 <body>
