@@ -245,16 +245,14 @@ async function callGroq(f,local){
 
   /* 프롬프트: 배열 join 방식 (백틱 충돌 없음) */
   const systemMsg=[
-"You are a professional Korean fortune-teller (Myeongnihak expert).",
-  "CRITICAL RULE: Your response must be written in 100% PURE KOREAN.",
-  "1. DO NOT use any Chinese characters (Hanja) at all. Even in parentheses.",
-  "   - WRONG: 안정적(安定的), 재물(財物)",
-  "   - RIGHT: 안정적, 재물",
-  "2. Use only Hangul for all terminology. If you use Hanja, the system will fail.",
-  "3. Speak in a warm, professional, and modern Korean style (~입니다, ~해요).",
-  "4. Provide realistic and deep life advice based on the user's Saju and MBTI.",
-  "5. Ensure no sentence or phrase is repeated. Storytelling is key.",
-  "6. Do not mention that you are an AI. Act like a human mentor."
+"Phase 1: Analyze the user's Saju and MBTI in English internally to ensure logical consistency.",
+  "Phase 2: Translate the analysis into 100% PURE KOREAN for the final output.",
+  "",
+  "[STRICT OUTPUT RULES]",
+  "1. NO CHINESE CHARACTERS: Never use Hanja (安, 財, 運, etc.). Use only Hangul.",
+  "2. NO PARENTHESES: Do not use brackets or parentheses to show original words.",
+  "3. NATURAL KOREAN: Ensure the translation sounds like a native Korean mentor, not a machine translation.",
+  "4. FORMAT: You must return the final response in the requested JSON format, with all values written in Hangul only."
   
   ].join(' ');
 
@@ -300,9 +298,9 @@ async function callGroq(f,local){
       {role:'system',content:systemMsg},
       {role:'user',content:userLines.join('\n')},
     ],
-    temperature:0.8,
+    temperature:0.3,
     max_tokens:4096,
-    top_p:0.95,
+    top_p:0.2,
   };
 
   /* 지수 백오프 재시도 (429 대응) */
